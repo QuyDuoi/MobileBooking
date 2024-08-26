@@ -96,8 +96,8 @@ const Category = () => {
         setisCategoryDetail(false)
     }
     // thực hiện đổi giao diện khi isAddCategory=true
-    if(isAddCategory)
-        return (<AddCategory  onAdd={addCategoryHandler} onCanler={setStatusAdd}/>)
+    // if(isAddCategory)
+    //     return (<AddCategory  onAdd={addCategoryHandler} onCanler={setStatusAdd}/>)
    
 
     return (
@@ -105,7 +105,7 @@ const Category = () => {
             <ImageBackground
                 style={[styles.imgHeader, {justifyContent: 'center'}]}
                 source={require('./components/src/img/backgrour.png')}>
-                    <TouchableOpacity onPress={()=>{setisAddCategory(true)}}>
+                    <TouchableOpacity style={styles.iconContainer} onPress={()=>{setisAddCategory(true)}}>
                         <Image
                             style={styles.iconadd}
                             source={require('../ScreenCategory/components/src/img/add-square-02.png')}
@@ -114,6 +114,13 @@ const Category = () => {
                 <ListCategory onClickItem={setDetailCategory} onUpdate={onClickUpdate} onDeleteHandler={deleteCategoryHandler} data={ListCategorys}/>
             </ImageBackground>
             
+            <Modal  
+                animationType='slide' 
+                transparent={true}
+                visible={isAddCategory}>
+                <AddCategory  onAdd={addCategoryHandler} onCanler={setStatusAdd}/>
+            </Modal>
+
             <Modal  
                 animationType='slide' 
                 transparent={true}
@@ -142,11 +149,13 @@ const styles = StyleSheet.create({
         height: '100%',
         resizeMode: 'cover',
     },
-    iconadd:{
-        height: 25,
-        width: 25,
+    iconContainer:{
         position: 'absolute',
         end: 40,
-        marginTop: 30,
+        bottom:50,
+    },
+    iconadd:{
+        height: 45,
+        width: 45,
     }
 })

@@ -11,7 +11,7 @@ function DrawerNavigator(): React.JSX.Element {
   return (
     <NavigationContainer>
     <Drawer.Navigator initialRouteName="Category">
-      <Drawer.Screen name="Home" component={EmployeeManagement} />
+      {/* <Drawer.Screen name="Home" component={EmployeeManagement} /> */}
       <Drawer.Screen name="Category" component={Category} options={{title:'Danh mục'}}/>
     </Drawer.Navigator>
     </NavigationContainer>

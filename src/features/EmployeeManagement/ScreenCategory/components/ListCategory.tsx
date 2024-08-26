@@ -17,6 +17,7 @@ export default ListCategory
 
 const styles = StyleSheet.create({
     container:{
-        marginTop:95
+        marginTop:95,
+        marginBottom:100
     }
 })

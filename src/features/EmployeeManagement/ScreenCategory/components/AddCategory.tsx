@@ -3,9 +3,14 @@ import React, { useState } from 'react'
 
 const AddCategory = ({onCanler,onAdd}) => {
   const [nameCategory, setnameCategory] = useState('')
+  const [validate, setvalidate] = useState('Nhận tên danh mục mới')
   function addCategory(){
     const newCategory = {
         nameCategory: nameCategory
+    }
+    if(nameCategory.trim() === ''){
+      setvalidate('Vui lòng nhập tên danh mục')
+      return false
     }
     onAdd(newCategory)
   }
@@ -45,7 +50,7 @@ const AddCategory = ({onCanler,onAdd}) => {
         <TextInput
           value={nameCategory}
           onChangeText={text=>{setnameCategory(text)}}
-          placeholder="Tên danh mục mới"
+          placeholder={validate}
           style={{
             borderWidth: 1,
             borderColor: '#73A2FF',
