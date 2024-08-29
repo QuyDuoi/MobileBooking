@@ -6,6 +6,7 @@ import DrawerNavigator from './src/navigation/DrawerNavigator';
 import ServiceManagement from './src/features/ScreenService/ServiceManagement';
 
 function App(): React.JSX.Element {
+
   return <DrawerNavigator/>;
 }
 

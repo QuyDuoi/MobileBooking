@@ -1,7 +1,16 @@
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 
 const UpdateCategory = ({date,Categoryname,onCandel,onChangeText,onUpdateHanderl}) => {
+
+    const [validateName, setvalidateName] = useState('Nhập tên danh mục cập nhật');
+    function  updateCategory(){
+        if(Categoryname.trim() === ''){
+            setvalidateName('Tên danh mục không được để trống');
+            return false;
+        }
+        onUpdateHanderl();
+    }
   return (
     <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
@@ -9,7 +18,7 @@ const UpdateCategory = ({date,Categoryname,onCandel,onChangeText,onUpdateHanderl
                     <Text style={styles.labelInput}>Name</Text>
                     <TextInput
                         value={Categoryname}
-                        placeholder="Tên danh mục mới"
+                        placeholder={validateName}
                         onChangeText={text=>onChangeText(text)}
                         style={styles.inputContainer}/>
                      <Text style={{marginStart:24,marginTop:12,fontSize:16}}>Ngày tạo : {date.slice(0,10)}</Text>
@@ -23,7 +32,7 @@ const UpdateCategory = ({date,Categoryname,onCandel,onChangeText,onUpdateHanderl
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                            onPress={() =>onUpdateHanderl()}>
+                            onPress={() =>updateCategory()}>
                             <Image
                             style={styles.actionButton}
                             source={{uri:'https://i.imgur.com/JIrCx2a.png'}}
