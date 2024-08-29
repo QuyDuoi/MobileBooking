@@ -3,7 +3,7 @@ import { api } from "./api";
 export const getListCategorys = async()=>{
     try {
         console.log("Bắt đầu lấy dữ liệu Category")
-        const response = await fetch('http://192.168.1.7:3000/api/getListCategory');
+        const response = await fetch('http://192.168.2.9:3000/api/getListCategory');
         const data = await response.json();
         console.log("Lấy dữ liệu Category thành công")
         return data

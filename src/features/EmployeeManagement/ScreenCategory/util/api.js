@@ -1,4 +1,4 @@
-const Ipv4='192.168.1.7'
+const Ipv4='192.168.2.9'
 export const api={
         categoryGetList:`http://${Ipv4}:3000/api/getListCategory`,
         categoryAdd:`http://${Ipv4}:3000/api/addCategory`,
