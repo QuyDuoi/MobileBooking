@@ -289,7 +289,7 @@ const ServiceManagement = () => {
     // item flatlis
     const renderItem = ({ item, index }: any) => (
         <TouchableOpacity
-            onPress={() => { setModleChiTiet(true), setSTT(index + 1), setUpdataIdDV(item._id), setUpdataTenDV(item.nameService), setValue(item.id_category), setUpdataMoTa(item.descreption), setUpdataGia(item.price), setUpdataThoiLuong(item.duration), setUpdataNgayTao(item.time) }}
+            onPress={() => { setModleChiTiet(true), setSTT(index + 1), setUpdataIdDV(item._id), setUpdataTenDV(item.nameService), setUpdataDanhMuc(item.id_category), setUpdataMoTa(item.descreption), setUpdataGia(item.price), setUpdataThoiLuong(item.duration), setUpdataNgayTao(item.time) }}
             style={style.item}
         >
             <View style={{ justifyContent: 'center' }}>
@@ -415,6 +415,8 @@ const ServiceManagement = () => {
                                             placeholder='Vui lòng chọn danh mục'
                                             onChangeValue={(text: any) => {
                                                 setUpdataDanhMuc(text);
+                                                console.log(text);
+                                                
                                             }}
                                             style={{ backgroundColor: "#F7F8F9", borderColor: '#F7F8F9' }}
                                             placeholderStyle={{ color: '#8391A1' }}
