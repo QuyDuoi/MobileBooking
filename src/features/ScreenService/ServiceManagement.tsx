@@ -99,69 +99,67 @@ const ServiceManagement = () => {
 
     //Kiểm tra dữ liệu add
     const kTraAdd = () => {
-
+        let isValid = true;
+    
+        // Kiểm tra trường "Tên Dịch Vụ"
         if (tenDV.trim() === "") {
             setValidteTen('Không được để trống tên');
-            return false;
+            isValid = false;
         } else if (tenDV.length < 5) {
             setValidteTen('Độ dài phải hơn 5 ký tự');
-            return false;
+            isValid = false;
         } else {
             setValidteTen(''); // Xóa thông báo lỗi nếu không có lỗi
-
         }
-
+    
+        // Kiểm tra trường "Danh Mục"
         if (value === null) {
             setValiDanhMuc('Vui lòng chọn danh mục');
-            return false;
+            isValid = false;
         } else {
             setValiDanhMuc(''); // Xóa thông báo lỗi nếu không có lỗi
         }
-
+    
+        // Kiểm tra trường "Mô Tả"
         if (moTa.trim() === "") {
             setValiMoTa('Không được để trống mô tả');
-            return false;
+            isValid = false;
         } else if (moTa.length < 10) {
             setValiMoTa('Độ dài phải hơn 10 ký tự');
-            return false;
+            isValid = false;
         } else {
             setValiMoTa(''); // Xóa thông báo lỗi nếu không có lỗi
         }
-
+    
+        // Kiểm tra trường "Giá"
         if (gia.trim() === "") {
             setValiGia('Không được để trống giá');
-            return false;
+            isValid = false;
         } else if (isNaN(Number(gia))) {
             setValiGia('Giá phải là số');
-            return false;
+            isValid = false;
         } else if (Number(gia) <= 0) {
             setValiGia('Giá phải lớn hơn 0');
-            return false;
+            isValid = false;
         } else {
             setValiGia(''); // Xóa thông báo lỗi nếu không có lỗi
         }
-
+    
+        // Kiểm tra trường "Thời Lượng"
         if (thoiLuong.trim() === "") {
             setValiThoiLuong('Không được để trống thời lượng');
-            return false;
+            isValid = false;
         } else if (isNaN(Number(thoiLuong))) {
             setValiThoiLuong('Thời lượng phải là số');
-            return false
+            isValid = false;
         } else if (Number(thoiLuong) <= 0) {
             setValiThoiLuong('Thời lượng phải lớn hơn 0');
-            return false;
+            isValid = false;
         } else {
             setValiThoiLuong(''); // Xóa thông báo lỗi nếu không có lỗi
         }
-
-        // if(ngayTao.trim()==""){
-        //     setValiNgayTao('Không được để trống ngày tạo')
-        //     return false
-        // }else{
-        //     setValiNgayTao('')
-
-        // }
-        return true
+    
+        return isValid;
     }
 
     //Them moi
@@ -178,6 +176,7 @@ const ServiceManagement = () => {
                 Alert.alert('Lỗi khi thêm dịch vụ mới vui lòng thử lại sau ')
             }
         }
+       
 
     }
 
@@ -293,11 +292,11 @@ const ServiceManagement = () => {
             style={style.item}
         >
             <View style={{ justifyContent: 'center' }}>
-                <Text style={{color:'black', fontWeight:'bold', fontSize:20}}>{index + 1}</Text>
+                <Text style={{ color: 'black', fontWeight: 'bold', fontSize: 20 }}>{index + 1}</Text>
             </View>
             <View style={{ justifyContent: 'center' }}>
                 <Text style={style.text}>Tên dịch vụ: {item.nameService}</Text>
-                <Text style={style.text}>Giá: {currency(item.price, { symbol: ' ', separator: ',',  precision: 0 }).format()} VND</Text>
+                <Text style={style.text}>Giá: {currency(item.price, { symbol: ' ', separator: ',', precision: 0 }).format()} VND</Text>
                 {/* <Text style={style.text}>Thời Lượng: {item.thoiLuong}</Text>
                 <Text style={style.text}>Ngày tạo: {item.ngayTao}</Text> */}
             </View>
@@ -355,12 +354,12 @@ const ServiceManagement = () => {
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 5 }}>
                             <View style={{ width: 350, height: 500, backgroundColor: 'white', borderWidth: 1, borderRadius: 10 }}>
                                 <Text style={{ color: 'black', fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 20, marginTop: 10 }}>Chi tiết dịch vụ</Text>
-                                <View style={{ marginLeft: 30 , height:'70%'}}>
+                                <View style={{ marginLeft: 30, height: '70%' }}>
                                     <Text style={style.text}>STT: {stt}</Text>
                                     <Text style={style.text}>Tên dịch vụ: {tenUpdataDV}</Text>
                                     <Text style={style.text}>Danh mục: {UpdatadanhMuc}</Text>
                                     <Text style={style.text}>Mô tả: {UpdatamoTa}</Text>
-                                    <Text style={style.text}>Giá: {currency(Updatagia, { symbol: ' ', separator: ',',  precision: 0 }).format()} VND</Text>
+                                    <Text style={style.text}>Giá: {currency(Updatagia, { symbol: ' ', separator: ',', precision: 0 }).format()} VND</Text>
                                     <Text style={style.text}>Thời Lượng: {UpdatathoiLuong} phút</Text>
                                     <Text style={style.text}>Ngày tạo: {UpdatangayTao}</Text>
                                 </View>
@@ -416,7 +415,7 @@ const ServiceManagement = () => {
                                             onChangeValue={(text: any) => {
                                                 setUpdataDanhMuc(text);
                                                 console.log(text);
-                                                
+
                                             }}
                                             style={{ backgroundColor: "#F7F8F9", borderColor: '#F7F8F9' }}
                                             placeholderStyle={{ color: '#8391A1' }}
@@ -579,7 +578,7 @@ const style = StyleSheet.create({
         color: 'black',
         fontSize: 16,
         fontWeight: '500',
-        
+
     },
     btn_add: {
         alignItems: 'flex-end',
