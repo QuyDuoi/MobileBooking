@@ -1,43 +1,48 @@
+import React, {useEffect} from 'react';
 import {
   FlatList,
-  Image,
   SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {useDispatch, useSelector} from 'react-redux';
+import {fetchEmployees} from '../../store/employeeSlice';
+import {RootState} from '../../store/store';
+import removeAccents from 'remove-accents';
+import type {AppDispatch} from '../../store/store';
 
-function ListNhanVien({
+function ListEmployee({
   tenNhanVien,
   moModalLuaChon,
   capNhat,
 }): React.JSX.Element {
-  const [employees, setEmployees] = useState([]);
-  useEffect(() => {
-    fetchNhanViens();
-  }, [capNhat]);
+  const dispatch = useDispatch<AppDispatch>();
+  const employees = useSelector(
+    (state: RootState) => state.employees.employees,
+  );
+  const status = useSelector((state: RootState) => state.employees.status);
 
   useEffect(() => {
-    if (tenNhanVien === '') {
-      fetchNhanViens();
-    } else {
+    if (status === 'idle' || capNhat) {
+      dispatch(fetchEmployees());
     }
-  }, [tenNhanVien]);
+  }, [dispatch, capNhat, status]);
 
-  const fetchNhanViens = async () => {
-    try {
-      const response = await fetch(
-        'http://192.168.1.19:3000/api/getListEmployee',
-      );
-      const data = await response.json();
-      setEmployees(data);
-    } catch (error) {
-      console.error('Có lỗi khi lấy dữ liệu nhân viên:', error);
-    }
+  // Ép kiểu tên nhân viên
+  const normalizeString = (str: string) => {
+    return removeAccents(str).toLowerCase();
   };
+
+  const filteredEmployees = tenNhanVien
+    ? employees.filter(employee =>
+        normalizeString(employee.fullName).includes(
+          normalizeString(tenNhanVien),
+        ),
+      )
+    : employees;
 
   const renderNhanVienItem = ({item}) => {
     return (
@@ -45,12 +50,12 @@ function ListNhanVien({
         <View style={styles.box1}>
           <View style={{width: '85%'}}>
             <Text numberOfLines={1} style={styles.text}>
-              Tên nhân viên: {item.tenNhanVien}
+              Tên nhân viên: {item.fullName}
             </Text>
             <View style={styles.box}>
               <Icon name="phone" size={20} color={'black'} />
               <Text style={{marginLeft: 5, fontSize: 15, color: 'black'}}>
-                Số điện thoại: {item.soDienThoai}
+                Số điện thoại: {item.phoneNumber}
               </Text>
             </View>
           </View>
@@ -69,19 +74,20 @@ function ListNhanVien({
       </View>
     );
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={employees}
+        data={filteredEmployees}
         renderItem={renderNhanVienItem}
-        keyExtractor={item => item._id}
-        extraData={employees}
+        keyExtractor={item => item.email}
+        extraData={filteredEmployees}
       />
     </SafeAreaView>
   );
 }
 
-export default ListNhanVien;
+export default ListEmployee;
 
 const styles = StyleSheet.create({
   khungItem: {
