@@ -33,7 +33,6 @@ const ServiceManagement = () => {
     const [modalUpdate, setModleUpdate] = useState(false)
     const [modalChiTiet, setModleChiTiet] = useState(false)
 
-    const [DataCategorys, setDataCategorys] = useState('')
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
     const [items, setItems] = useState([]);
@@ -52,6 +51,7 @@ const ServiceManagement = () => {
     const [Updatagia, setUpdataGia] = useState('')
     const [UpdatathoiLuong, setUpdataThoiLuong] = useState("")
     const [UpdatangayTao, setUpdataNgayTao] = useState("")
+    const [UpdatangayUpdate, setUpdataNgayUpdate] = useState("")
 
 
     const [validteTen, setValidteTen] = useState("")
@@ -181,7 +181,7 @@ const ServiceManagement = () => {
     //Them moi
     async function addServiceHandler() {
         if (kTraAdd()) {
-            const service = { nameService: tenDV, descreption: moTa, price: gia, duration: thoiLuong, time: ngayTao, id_category: danhMuc }
+            const service = { nameService: tenDV, descreption: moTa, price: gia,  time: thoiLuong, id_category: danhMuc }
             const isAdd = await addService(service)
             if (isAdd) {
                 ToastAndroid.show('Thêm dịch vụ mới thành công', ToastAndroid.SHORT)
@@ -272,20 +272,13 @@ const ServiceManagement = () => {
       setValiThoiLuong(''); // Xóa thông báo lỗi nếu không có lỗi
     }
 
-    // if(UpdatangayTao.trim()==""){
-    //     setValiNgayTao('Không được để trống ngày tạo')
-    //     return false
-    // }else{
-    //     setValiNgayTao('')
-
-    // }
     return true;
   };
 
     //Chuc nang sua
     async function updateServiceHandler() {
         if (kTraUpdata()) {
-            const service = { nameService: tenUpdataDV, descreption: UpdatamoTa, price: Updatagia, duration: UpdatathoiLuong, time: UpdatangayTao, id_category: UpdatadanhMuc }
+            const service = { nameService: tenUpdataDV, descreption: UpdatamoTa, price: Updatagia, time: UpdatathoiLuong, id_category: UpdatadanhMuc}
             const isAdd = await Updatesevice(idUpdataDV, service)
             if (isAdd) {
                 ToastAndroid.show('Sửa dịch vụ mới thành công', ToastAndroid.SHORT)
@@ -307,7 +300,7 @@ const ServiceManagement = () => {
     // item flatlis
     const renderItem = ({ item, index }: any) => (
         <TouchableOpacity
-            onPress={() => { setModleChiTiet(true), setSTT(index + 1), setUpdataIdDV(item._id), setUpdataTenDV(item.nameService), setUpdataDanhMuc(item.id_category), setUpdataMoTa(item.descreption), setUpdataGia(item.price), setUpdataThoiLuong(item.duration), setUpdataNgayTao(item.time) }}
+            onPress={() => { setModleChiTiet(true), setSTT(index + 1), setUpdataIdDV(item._id), setUpdataTenDV(item.nameService), setUpdataDanhMuc(item.id_category), setUpdataMoTa(item.descreption), setUpdataGia(item.price), setUpdataThoiLuong(item.time), setUpdataNgayTao(item.createdAt), setUpdataNgayUpdate(item.updatedAt) }}
             style={style.item}
         >
             <View style={{ justifyContent: 'center' }}>
@@ -326,7 +319,7 @@ const ServiceManagement = () => {
                     <Image style={{ width: 20, height: 20, }} source={require('./icon/bin.png')} />
                 </TouchableOpacity>
                 <View style={{ height: 30 }}></View>
-                <TouchableOpacity onPress={() => { setModleUpdate(true), setSTT(index + 1), setUpdataIdDV(item._id), setUpdataTenDV(item.nameService), setValue(item.id_category), setUpdataMoTa(item.descreption), setUpdataGia(item.price), setUpdataThoiLuong(item.duration), setUpdataNgayTao(item.time) }}>
+                <TouchableOpacity onPress={() => { setModleUpdate(true), setSTT(index + 1), setUpdataIdDV(item._id), setUpdataTenDV(item.nameService), setValue(item.id_category), setUpdataMoTa(item.descreption), setUpdataGia(item.price), setUpdataThoiLuong(item.time)}}>
                     <Image style={{ width: 20, height: 20, }} source={require('./icon/refresh.png')} />
                 </TouchableOpacity>
             </View>
@@ -383,7 +376,8 @@ const ServiceManagement = () => {
                                     <Text style={style.text}>Mô tả: {UpdatamoTa}</Text>
                                     <Text style={style.text}>Giá: {currency(Updatagia, { symbol: ' ', separator: ',', precision: 0 }).format()} VND</Text>
                                     <Text style={style.text}>Thời Lượng: {UpdatathoiLuong} phút</Text>
-                                    <Text style={style.text}>Ngày tạo: {UpdatangayTao}</Text>
+                                    <Text style={style.text}>Ngày tạo: {UpdatangayTao.slice(0,10)}</Text>
+                                    <Text style={style.text}>Cập nhật gần nhất: {UpdatangayUpdate.slice(0,10)}</Text>
                                 </View>
 
                 <View style={{alignItems: 'center', marginTop: 40}}>
