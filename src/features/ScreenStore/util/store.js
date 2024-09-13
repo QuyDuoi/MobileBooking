@@ -3,7 +3,7 @@ import { api } from "./api";
 export const getListStore = async()=>{
     try {
         console.log("Bắt đầu lấy dữ liệu Store")
-        const response = await fetch('http://192.168.2.10:3000/api/getListStore');
+        const response = await fetch('http://192.168.1.8:3000/api/getListStore');
         const data = await response.json();
         console.log("Lấy dữ liệu Store thành công")
         return data

@@ -3,7 +3,7 @@ import { api } from "./api";
 export const getListServices = async()=>{
     try {
         console.log("Bắt đầu lấy dữ liệu Service")
-        const response = await fetch('http://192.168.2.10:3000/api/getListService');
+        const response = await fetch('http://192.168.1.8:3000/api/getListService');
         const data = await response.json();
         console.log("Lấy dữ liệu Service thành công")
         return data

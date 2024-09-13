@@ -1,4 +1,3 @@
-import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createDrawerNavigator} from '@react-navigation/drawer';
@@ -12,11 +11,23 @@ const Drawer = createDrawerNavigator();
 function DrawerNavigator(): React.JSX.Element {
   return (
     <NavigationContainer>
-      <Drawer.Navigator initialRouteName="Store">
-        <Drawer.Screen name="Home" component={EmployeeManagement} />
-        <Drawer.Screen name="Category" component={Category} options={{title:'Danh mục'}}/> 
-       <Drawer.Screen name="Service" component={ServiceManagement} options={{title:'Dịch Vụ'}}/>
-       <Drawer.Screen name="Store" component={StoreManager} options={{title:'Cửa hàng'}}/>
+      <Drawer.Navigator initialRouteName="Home">
+        <Drawer.Screen name="Home" component={EmployeeManagement} options={{title: 'Quản lý nhân viên'}}/>
+        <Drawer.Screen
+          name="Category"
+          component={Category}
+          options={{title: 'Danh mục'}}
+        />
+        <Drawer.Screen
+          name="Service"
+          component={ServiceManagement}
+          options={{title: 'Dịch Vụ'}}
+        />
+        <Drawer.Screen
+          name="Store"
+          component={StoreManager}
+          options={{title: 'Cửa hàng'}}
+        />
       </Drawer.Navigator>
     </NavigationContainer>
   );
@@ -24,4 +35,3 @@ function DrawerNavigator(): React.JSX.Element {
 
 export default DrawerNavigator;
 
-const styles = StyleSheet.create({});
