@@ -4,6 +4,7 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import EmployeeManagement from '../features/EmployeeManagement/EmployeeManagement';
 import Category from '../features/ScreenCategory/Category';
 import ServiceManagement from '../features/ScreenService/ServiceManagement';
+import BookingManagement from '../features/ScreenBooking/BookingManagement';
 import StoreManager from '../features/ScreenStore/StoreManager';
 
 const Drawer = createDrawerNavigator();
