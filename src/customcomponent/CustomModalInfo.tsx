@@ -37,10 +37,19 @@ function CustomModalInfo({visible, onClose, infoEmployee}) {
               Địa chỉ: {infoEmployee.address}
             </Text>
             <Text numberOfLines={2} style={styles.text3}>
-              Cửa hàng: {'Đang tìm kiếm'}
+              Cửa hàng:{' '}
+              {infoEmployee.id_store
+                ? `${infoEmployee.id_store.name}, ${infoEmployee.id_store.address}`
+                : 'Chưa có thông tin'}
             </Text>
+
             <Text numberOfLines={2} style={styles.text3}>
               Vai trò:{' '}
+              {infoEmployee.userRole === 'admin'
+                ? 'Quản trị viên'
+                : infoEmployee.userRole === 'storeManagement'
+                ? 'Quản lý cửa hàng'
+                : 'Nhân viên cửa hàng'}
             </Text>
             <View style={{width: '100%', position: 'absolute', bottom: 10}}>
               <TouchableOpacity style={styles.btnQuayLai} onPress={onClose}>

@@ -1,6 +1,8 @@
-const ipAddress = 'http://192.168.1.27:3000/api/';
+import { Employee } from "../store/employeeSlice";
 
-export const addEmployee = async (employee) => {
+const ipAddress = 'http://192.168.1.8:3000/api/';
+
+export const addEmployee = async (employee: Employee) => {
   try {
     const response = await fetch(`${ipAddress}addEmployee`, {
       method: 'POST',
@@ -25,7 +27,7 @@ export const addEmployee = async (employee) => {
   }
 };
 
-export const updateEmployee = async (id, employee) => {
+export const updateEmployee = async (id: string, employee: Employee) => {
   try {
     const response = await fetch(`${ipAddress}updateEmployee/${id}`, {
       method: 'PUT',
@@ -77,5 +79,30 @@ export const getListStore = async () => {
   } catch (error) {
     console.log('Lỗi khi lấy danh sách: ', error);
     return []; // Trả về mảng rỗng nếu có lỗi
+  }
+};
+
+export const login = async (email: string, password: string): Promise<{status: number, token: string, refreshToken: string, data: Employee}> => {
+  try {
+    const response = await fetch(`${ipAddress}login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Đăng nhập không thành công');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Lỗi đăng nhập: ', error);
+    throw error;
   }
 };

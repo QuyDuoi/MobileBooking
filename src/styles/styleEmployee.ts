@@ -198,7 +198,10 @@ export const styles = StyleSheet.create({
         width: 150,
         height: 150,
         marginTop: 20, 
-        resizeMode: 'cover'
+        resizeMode: 'cover',
+        borderColor: 'black',
+        borderWidth: 1,
+        borderRadius: 10
     }
   });
   
