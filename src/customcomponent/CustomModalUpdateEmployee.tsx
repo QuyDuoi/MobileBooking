@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   View,
   Text,
   TextInput,
   TouchableOpacity,
+  StyleSheet,
   ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -13,19 +14,25 @@ import DropdownStore from './DropdownStore';
 import Employee from '../services/models/EmployeeModel';
 import { styles } from '../styles/styleRadioEmployee';
 
-interface CustomModalAddEmployeeProps {
+interface CustomModalUpdateEmployeeProps {
   visible: boolean;
   onClose: () => void;
-  onSubmit: (employee: Employee) => void;
+  onUpdate: (updatedEmployee: Employee) => void;
+  employeeOld: Employee; // Nhận thông tin nhân viên cũ
 }
 
-const CustomModalAddEmployee: React.FC<CustomModalAddEmployeeProps> = ({
+const CustomModalUpdateEmployee: React.FC<CustomModalUpdateEmployeeProps> = ({
   visible,
   onClose,
-  onSubmit,
+  onUpdate,
+  employeeOld,
 }) => {
-  const [employee, setEmployee] = useState<Employee>(new Employee('', '', ''));
+  const [employee, setEmployee] = useState<Employee>(employeeOld);
   const [errors, setErrors] = useState<Partial<Record<keyof Employee, string>>>({});
+
+  useEffect(() => {
+    setEmployee(employeeOld);
+  }, [employeeOld]);
 
   const handleInputChange = (field: keyof Employee, value: string) => {
     setEmployee(prevState => ({
@@ -61,10 +68,10 @@ const CustomModalAddEmployee: React.FC<CustomModalAddEmployeeProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleAddEmployee = () => {
+  const handleUpdateEmployee = () => {
     if (validateForm()) {
-      onSubmit(employee);
-      onClose(); // Close modal after submitting
+      onUpdate(employee);
+      onClose(); // Đóng modal sau khi cập nhật
     }
   };
 
@@ -80,7 +87,7 @@ const CustomModalAddEmployee: React.FC<CustomModalAddEmployeeProps> = ({
             <TouchableOpacity style={styles.closeButton} onPress={onClose}>
               <Icon name="close" size={20} color={'black'} />
             </TouchableOpacity>
-            <Text style={styles.modalTitle}>Thêm nhân viên mới</Text>
+            <Text style={styles.modalTitle}>Cập nhật thông tin nhân viên</Text>
 
             <TextInput
               style={styles.input}
@@ -139,12 +146,12 @@ const CustomModalAddEmployee: React.FC<CustomModalAddEmployeeProps> = ({
             )}
 
             <Text style={styles.label}>Phân quyền người dùng</Text>
-            <Radio choiseRole={handleRoleSelect} userRole={employee.id_store || ''} />
+            <Radio choiseRole={handleRoleSelect} userRole={employee.userRole || ''} />
 
             <TouchableOpacity
               style={styles.submitButton}
-              onPress={handleAddEmployee}>
-              <Text style={styles.submitButtonText}>Thêm nhân viên</Text>
+              onPress={handleUpdateEmployee}>
+              <Text style={styles.submitButtonText}>Cập nhật</Text>
             </TouchableOpacity>
           </ScrollView>
         </View>
@@ -153,4 +160,4 @@ const CustomModalAddEmployee: React.FC<CustomModalAddEmployeeProps> = ({
   );
 };
 
-export default CustomModalAddEmployee;
+export default CustomModalUpdateEmployee;

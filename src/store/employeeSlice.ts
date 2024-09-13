@@ -2,11 +2,13 @@ import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { getListEmployee, addEmployee } from '../services/api'
 
 export interface Employee {
+    _id?: string;
     fullName: string;
     email: string;
     password: string;
     phoneNumber?: string;
     address?: string;
+    userRole?: string;
     image?: string;
     id_store?: string;
 }

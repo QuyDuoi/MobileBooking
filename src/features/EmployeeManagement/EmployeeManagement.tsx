@@ -64,7 +64,7 @@ function EmployeeManagement(): React.JSX.Element {
       <View style={styles.box1}>
         <Text style={styles.title}>Danh sách nhân viên</Text>
         <ListNhanVien
-          moModalLuaChon={item => {
+          moModalLuaChon={(item) => {
             setModalLuaChon(true), setInfoEmployee(item);
           }}
           capNhat={catNhapDuLieu}
