@@ -1,9 +1,9 @@
 import { api } from "./api";
 
-export const getListStore = async()=>{
+export const getListStore = async () => {
     try {
         console.log("Bắt đầu lấy dữ liệu Store")
-        const response = await fetch('http://192.168.1.8:3000/api/getListStore');
+        const response = await fetch(api.StoreGetList);
         const data = await response.json();
         console.log("Lấy dữ liệu Store thành công")
         return data
@@ -35,7 +35,7 @@ export const addStore = async (formData) => {
     }
 }
 
-export const UpdateStore = async(id, formData)=>{
+export const UpdateStore = async (id, formData) => {
     try {
         console.log("Bắt đầu cập nhật Store")
         const response = await fetch(`${api.StoreUpdate}/${id}`, {
@@ -52,11 +52,10 @@ export const UpdateStore = async(id, formData)=>{
     } catch (error) {
         console.log('lỗi khi cập nhật Store')
         return false
-        console.log(error);
     }
 }
 
-export const deleteStore = async(id)=>{
+export const deleteStore = async (id) => {
     try {
         console.log("Bắt đầu xóa Store")
         const response = await fetch(`${api.StoreDelete}/${id}`, {

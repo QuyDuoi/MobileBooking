@@ -2,48 +2,48 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
     boby: {
-        width: '100%',
-        height: '100%',
-        backgroundColor: '#F5F5F5',
+        flex: 1,
     },
-    top: {
+    trangTri: {
         width: '100%',
-        height: 258,
+        position: 'absolute',
+        top: 0,
+
     },
     inputSearch: {
-        width: 350,
-        height: 45,
-        backgroundColor: '#F7F8F9',
-        borderRadius: 10,
-        marginTop: 28,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingLeft: 10,
-        paddingRight: 15,
+        borderRadius: 8,
+        paddingLeft: 20,
+        backgroundColor: 'white',
+        color: 'black',
+        paddingRight: 55,
+    },
+    searchTen: {
+        position: 'absolute',
+        top: 15,
+        right: 10,
     },
     box1: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 5
     },
     box2: {
-        width: 350,
-        height: 500,
+        width: "90%",
+        padding: 10,
         backgroundColor: 'white',
         borderWidth: 1,
         borderRadius: 10
     },
     box3: {
-        width: 350,
-        height: 700,
+        width: "100%",
+        padding: 10,
         backgroundColor: 'white',
         borderWidth: 1,
         borderRadius: 10,
     },
     title: {
         color: 'black',
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: 10,
@@ -58,8 +58,8 @@ export const styles = StyleSheet.create({
         borderRadius: 10
     },
     inputAdd: {
-        width: 330,
-        height: 45,
+        borderWidth: 1,
+        borderColor: '#C0C0C0',
         backgroundColor: '#F7F8F9',
         borderRadius: 10,
         marginTop: 28,
@@ -68,19 +68,39 @@ export const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 15,
     },
+    btnThem: {
+        width: 50,
+        height: 50,
+        backgroundColor: '#FBD141',
+        borderRadius: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin: 10,
+    },
     item: {
         backgroundColor: '#E8E8E8',
-        margin: 10,
-        padding: 20,
+        margin: 5,
+        padding: 10,
         borderRadius: 10,
         flexDirection: 'row',
+        alignContent: 'center',
         justifyContent: 'space-between',
+        borderColor: "#C0C0C0",
+        borderWidth: 1
     },
     text: {
         color: 'black',
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: '500',
-        width: 260,
+        width: '85%',
+    },
+    text1: {
+        color: 'black',
+        fontSize: 15,
+        fontWeight: '500',
+
+        marginLeft: 5,
+
     },
     btn_anh: {
         color: 'black',
@@ -93,9 +113,14 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '500',
     },
-    btn_add: {
-        alignItems: 'flex-end',
-        marginEnd: '5%',
+    box4: {
+
+        backgroundColor: 'white',
+        height: '85%',
+        marginHorizontal: 25,
+        borderRadius: 15,
+        elevation: 2,
+        alignItems: 'center',
     },
     btn_back: {
         width: 30,
@@ -125,11 +150,11 @@ export const styles = StyleSheet.create({
         width: 330,
         height: 45,
         flexDirection: 'row',
-        justifyContent: 'space-around',
+        justifyContent: 'space-between',
         alignItems: 'center',
         borderColor: '#F7F8F9',
         backgroundColor: '#F7F8F9',
-        borderRadius: 10, marginTop: 30
+        borderRadius: 10, marginTop: 40
     },
     view2: {
         width: 80,
@@ -138,5 +163,5 @@ export const styles = StyleSheet.create({
         borderColor: '#8391A1',
         borderWidth: 1,
         borderRadius: 10
-    }
+    },
 })
