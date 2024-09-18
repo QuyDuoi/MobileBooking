@@ -6,13 +6,16 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { styles } from './styles/styleStore';
 let idService = '';
 function StoreManager() {
-    const [Data, setData] = useState(null)
+    const [Data, setData] = useState([])
+    const [filteredData, setFilteredData] = useState([]);
+
     const [modalChiTiet, setModleChiTiet] = useState(false)
     const [modalAdd, setModleAdd] = useState(false)
     const [modalUpdate, setModleUpdate] = useState(false)
 
     const [stt, setSTT] = useState("")
     const [names, setNames] = useState([])
+    const [searchName, setSearchName] = useState('')
 
     const [idUpdataStore, setUpdataIdStore] = useState("")
     const [tenUpdataStore, setUpdataTenStore] = useState("")
@@ -70,6 +73,8 @@ function StoreManager() {
     async function getData() {
         const data = await getListStore();
         setData(data.reverse());
+        setFilteredData(data.reverse())
+
         const reversedData = data.reverse();
         const mapTen = reversedData.map(item => item.name);
         setNames(mapTen)
@@ -195,14 +200,14 @@ function StoreManager() {
 
     const kTraUpdate = () => {
         let check = true
-       
+
         if (tenUpdataStore === "") {
             setValidteTen("Vui lòng nhập tên cửa hàng")
             check = false
         } else if (tenUpdataStore.length < 2) {
             setValidteTen("Độ dài phải hơn 2 ký tự")
             check = false
-        }else {
+        } else {
             setValidteTen("")
         }
 
@@ -244,35 +249,57 @@ function StoreManager() {
             setValiImage('')
         }
 
-        
+
         return check
     }
     // chuc nang sua
     async function updateStoreHandler() {
         if (kTraUpdate()) {
             const formData = new FormData();
-            // Thêm từng trường dữ liệu
-            formData.append('name', tenUpdataStore); // 'name' là tên của trường gửi lên server, `name` là giá trị
+            formData.append('name', tenUpdataStore);
             formData.append('address', UpdatadAddRess);
             formData.append('location', UpdataLocation);
             formData.append('phoneNumber', UpdataNumberPhone);
-            formData.append('image', {
-                uri: UpdatatImg, // Đường dẫn URI tới file ảnh
-                type: 'image/jpeg', // Đảm bảo định dạng file được chỉ định
-                name: 'photo.jpg', // Đặt tên cho file ảnh
-            });
-            const isAdd = await UpdateStore(idUpdataStore, formData)
-            if (isAdd) {
-                ToastAndroid.show('Sửa thông tin cửa hàng thành công', ToastAndroid.SHORT)
-                setModleUpdate(false)
-                TrangDL()
-                getData();
 
-            } else {
-                Alert.alert('Lỗi khi Sửa cưar hàng vui lòng thử lại sau ')
+            if (UpdatatImg) {
+                formData.append('image', {
+                    uri: UpdatatImg,
+                    type: 'image/jpeg',
+                    name: 'photo.jpg',
+                });
+            }
+
+            try {
+                const isAdd = await UpdateStore(idUpdataStore, formData);
+                if (isAdd) {
+                    Alert.alert('Thành công', 'Sửa thông tin cửa hàng thành công');
+                    setModleUpdate(false);
+                    TrangDL();
+                    getData();
+                } else {
+                    Alert.alert('Lỗi', 'Lỗi khi sửa cửa hàng, vui lòng thử lại sau.');
+                }
+            } catch (error) {
+                console.error(error);
+                Alert.alert('Lỗi', 'Đã xảy ra lỗi, vui lòng thử lại sau.');
             }
         }
     }
+    //Chuc nang search
+    const handleSearch = (text: string) => {
+        setSearchName(text);
+
+        if (text) {
+            // Lọc dữ liệu theo tên
+            const filtered = Data.filter(item =>
+                item.name.toLowerCase().includes(text.toLowerCase())
+            );
+            setFilteredData(filtered);
+        } else {
+            // Nếu input rỗng, hiển thị lại toàn bộ dữ liệu
+            setFilteredData(Data);
+        }
+    };
     const TrangDL = () => {
         setName('')
         setAddRess('')
@@ -292,26 +319,28 @@ function StoreManager() {
             onPress={() => { setModleChiTiet(true), setSTT(index + 1), setUpdataTenStore(item.name), setUpdataAddRess(item.address), setUpdataLocation(item.location), setUpdataNumberPhone(item.phoneNumber), setUpdataImg(item.image), setUpdataNgayTao(item.createdAt), setUpdataNgayUpdate(item.updatedAt) }}
             style={styles.item}
         >
-            <View style={{ justifyContent: 'center' }}>
-                <Text style={{ color: 'black', fontWeight: 'bold', fontSize: 20 }}>{index + 1}</Text>
-            </View>
-            <View style={{ justifyContent: 'center', marginLeft: 20 }}>
-
-                <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 5 }}>
-                    <Image style={{ width: 20, height: 20, }} source={require('./icon/store.png')} />
-                    <Text style={styles.text}>{item.name}</Text>
+            <View style={{ flexDirection: 'row' }}>
+                <View style={{ justifyContent: 'center' }}>
+                    <Text style={styles.text1}>{index + 1}</Text>
                 </View>
+                <View style={{ justifyContent: 'center' }}>
 
-                <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 5 }}>
-                    <Image style={{ width: 20, height: 20, }} source={require('./icon/location.png')} />
-                    <Text style={styles.text}>{item.location} </Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 5 }}>
+                        <Image style={{ width: 20, height: 20, marginHorizontal: 5 }} source={require('./icon/store.png')} />
+                        <Text style={styles.text}>{item.name}</Text>
+                    </View>
+
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 5 }}>
+                        <Image style={{ width: 20, height: 20, marginHorizontal: 5 }} source={require('./icon/location.png')} />
+                        <Text style={styles.text}>{item.location} </Text>
+                    </View>
+
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 5 }}>
+                        <Image style={{ width: 20, height: 20, marginHorizontal: 5 }} source={require('./icon/telephone.png')} />
+                        <Text style={styles.text}>{item.phoneNumber} </Text>
+                    </View>
+
                 </View>
-
-                <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 5 }}>
-                    <Image style={{ width: 20, height: 20, }} source={require('./icon/telephone.png')} />
-                    <Text style={styles.text}>{item.phoneNumber} </Text>
-                </View>
-
             </View>
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                 <TouchableOpacity onPress={() => {
@@ -326,224 +355,116 @@ function StoreManager() {
             </View>
         </TouchableOpacity>
     )
+
     return (
         <View style={styles.boby}>
-            <ImageBackground source={require('./anh/image.png')} style={styles.top}>
-                <View style={{ alignItems: 'center' }}>
-                    <View style={styles.inputSearch}>
-                        <TextInput
-                            style={{ width: 300 }}
-                            placeholder="Tìm kiếm cửa hàng"
-                            placeholderTextColor={'#8391A1'}
-                        />
+            <Image source={require('./anh/image.png')} style={styles.trangTri} />
+            <View style={{
+                marginHorizontal: 30,
+                marginVertical: 15,
+            }}>
+                <TextInput
+                    style={styles.inputSearch}
+                    placeholder="Tìm kiếm tên cửa hàng"
+                    placeholderTextColor={'#8391A1'}
+                    onChangeText={text => handleSearch(text)}
+                />
 
-                        <View style={{ justifyContent: 'center' }}>
-                            <Image
-                                style={{ width: 20, height: 20 }}
-                                source={require('./icon/search.png')}
-                            />
-                        </View>
-                    </View>
-                    <View style={{ alignItems: 'center', marginTop: 40 }}>
-                        <Text style={styles.title}>
-                            Danh sách cửa hàng
-                        </Text>
-                    </View>
 
-                    <FlatList
-                        style={{ height: "170%", marginTop: 20 }}
-                        data={Data}
-                        renderItem={renderItem}
-                    // keyExtractor={(item, index) => index.toString()}
-                    />
-
-                    {/* Modal Chi tiết */}
-                    <Modal
-                        animationType='slide'
-                        visible={modalChiTiet}
-                        transparent={true}
-                    >
-                        <View style={styles.box1}>
-                            <View style={styles.box2}>
-                                <Text style={styles.title}>Chi tiết cửa hàng</Text>
-                                <View style={{ width: '100%', alignItems: 'center', }}>
-                                    <Image style={styles.img_CT} source={{ uri: employeeImage }} />
-                                </View>
-
-                                <View style={{ marginLeft: 30, height: '45%', marginTop: 10 }}>
-                                    <Text style={styles.text1}>STT: {stt}</Text>
-                                    <Text style={styles.text1}>Tên cửa hàng: {tenUpdataStore}</Text>
-                                    <TouchableOpacity onPress={() => { handleAddress(UpdatadAddRess) }}>
-                                        <Text style={styles.text1}>Vị trí: {UpdatadAddRess}</Text>
-                                    </TouchableOpacity>
-
-                                    <Text style={styles.text1}>Địa chỉ: {UpdataLocation}</Text>
-                                    <Text style={styles.text1}>Số điện thoại: {UpdataNumberPhone} </Text>
-                                    <Text style={styles.text1}>Ngày tạo: {UpdatangayTao.slice(0, 10)}</Text>
-                                    <Text style={styles.text1}>Cập nhật gần nhất: {UpdatangayUpdate.slice(0, 10)}</Text>
-                                </View>
-
-                                <View style={{ alignItems: 'center' }}>
-                                    <TouchableOpacity
-                                        style={styles.btn_chucnang}
-                                        onPress={() => {
-                                            setModleChiTiet(false)
-                                        }}>
-                                        <Text
-                                            style={{
-                                                color: '#FFFFFF',
-                                                fontSize: 14,
-                                                fontWeight: 'bold',
-                                            }}>
-                                            Đóng
-                                        </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        </View>
-                    </Modal>
-                    {/* Modal sua */}
-                    <Modal animationType="slide" visible={modalUpdate} transparent={true}>
-
-                        <KeyboardAvoidingView
-                            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                            style={{ flex: 1, alignItems: 'center' }}
-                        >
-                            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-                                <View style={styles.box3}>
-                                    <View
-                                        style={{
-                                            flexDirection: 'row',
-                                            justifyContent: 'space-between',
-                                            margin: 10,
-                                        }}>
-                                        <TouchableOpacity
-                                            onPress={() => {
-                                                setModleUpdate(false);
-                                            }}
-                                            style={styles.btn_back}>
-                                            <Image
-                                                style={{ width: 15, height: 15 }}
-                                                source={require('./icon/back.png')}
-                                            />
-                                        </TouchableOpacity>
-                                        <View style={{ justifyContent: 'center' }}>
-                                            <Text style={styles.title2}>Sửa thông tin cửa hàng</Text>
-                                        </View>
-                                        <View style={{ width: 30, height: 30 }}></View>
-                                    </View>
-
-                                    <View style={{ alignItems: 'center' }}>
-                                        <View style={styles.inputAdd}>
-                                            <TextInput
-                                                style={{ width: 300, color: 'black' }}
-                                                defaultValue={tenUpdataStore}
-                                                placeholder="Nhập tên store"
-                                                placeholderTextColor={'#8391A1'}
-                                                onChangeText={text => {
-                                                    setUpdataTenStore(text);
-                                                }}
-                                            />
-                                        </View>
-                                        <Text style={styles.textVali}>{validteTen}</Text>
-                                        <View style={styles.inputAdd}>
-                                            <TextInput
-                                                style={{ width: 300, color: 'black' }}
-                                                defaultValue={UpdatadAddRess}
-                                                placeholder="Nhập vị trí"
-                                                placeholderTextColor={'#8391A1'}
-                                                onChangeText={text => {
-                                                    setUpdataAddRess(text);
-                                                }}
-                                            />
-                                        </View>
-                                        <Text style={styles.textVali}>{validteAddress}</Text>
-                                        <View style={styles.inputAdd}>
-                                            <TextInput
-                                                style={{ width: 300, color: 'black' }}
-                                                defaultValue={UpdataLocation}
-                                                placeholder="Nhập địa chỉ"
-                                                placeholderTextColor={'#8391A1'}
-                                                onChangeText={text => {
-                                                    setUpdataLocation(text);
-                                                }}
-                                            />
-                                        </View>
-                                        <Text style={styles.textVali}>{validteLocation}</Text>
-                                        <View style={styles.inputAdd}>
-                                            <TextInput
-                                                style={{ width: 300, color: 'black' }}
-                                                defaultValue={UpdataNumberPhone}
-                                                placeholder="Nhập số điện thoại"
-                                                placeholderTextColor={'#8391A1'}
-                                                onChangeText={text => {
-                                                    setUpdataNumberPhone(text);
-                                                }}
-                                            />
-                                        </View>
-                                        <Text style={styles.textVali}>{validtePhoneNumber}</Text>
-
-                                        <View style={styles.view1}>
-                                            <TouchableOpacity
-                                                style={styles.view2}
-                                                onPress={() => {
-                                                    requestCameraPermission();
-                                                }}>
-                                                <Text style={{ textAlign: 'center' }}>Chọn ảnh</Text>
-                                            </TouchableOpacity>
-
-                                            {
-                                                UpdatatImg && (
-                                                    <Image
-                                                        source={{ uri: UpdatatImg }}
-                                                        style={{ height: 100, width: 100, borderRadius: 5 }}
-                                                    />
-                                                )}
-
-                                        </View>
-                                        <Text style={styles.textVali}>{validteImage}</Text>
-                                        <TouchableOpacity
-                                            onPress={() => {
-                                                updateStoreHandler();
-                                            }}
-                                            style={{
-                                                width: 330,
-                                                height: 40,
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                backgroundColor: '#80B3FE',
-                                                borderRadius: 10,
-                                                marginTop: 140,
-                                            }}>
-                                            <Text style={{ color: '#FFFFFF' }}>Hoàn tất</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                            </ScrollView>
-                        </KeyboardAvoidingView>
-
-                    </Modal>
-                </View>
-                <TouchableOpacity
-                    style={styles.btn_add}
-                    onPress={() => {
-                        setModleAdd(true);
-                    }}>
+                <View style={styles.searchTen} >
                     <Image
-                        style={{ width: 50, height: 50 }}
-                        source={require('./icon/add-blue.png')}
+                        style={{ width: 20, height: 20 }}
+                        source={require('./icon/search.png')}
                     />
-                </TouchableOpacity>
-            </ImageBackground>
+                </View>
+            </View>
 
-            {/* Modal Thêm mới */}
-            <Modal animationType="slide" visible={modalAdd} transparent={true}>
+            <View style={styles.box4}>
+                <View style={{ alignItems: 'center' }}>
+                    <Text style={styles.title}>
+                        Danh sách cửa hàng
+                    </Text>
+                </View>
+                <FlatList
+                    style={{}}
+                    data={filteredData}
+                    renderItem={renderItem}
+                    ListEmptyComponent={<Text style={styles.title2}>Không có kết quả</Text>}
+                // keyExtractor={(item, index) => index.toString()}
+                />
+                <View
+                    style={{
+                        width: '100%',
+                        flexDirection: 'row',
+                        justifyContent: 'flex-end',
+                    }}>
+                    <TouchableOpacity
+                        style={styles.btnThem}
+                        onPress={() => {
+                            setModleAdd(true);
+                        }}>
+                        <Image
+                            style={{ width: 50, height: 50 }}
+                            source={require('./icon/add-blue.png')}
+                        />
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+
+            {/* Modal Chi tiết */}
+            <Modal
+                animationType='slide'
+                visible={modalChiTiet}
+                transparent={true}
+            >
+                <View style={styles.box1}>
+                    <View style={styles.box2}>
+                        <Text style={styles.title}>Chi tiết cửa hàng</Text>
+                        <View style={{ width: '100%', alignItems: 'center', }}>
+                            <Image style={styles.img_CT} source={{ uri: employeeImage }} />
+                        </View>
+
+                        <View style={{ margin: 20 }}>
+                            <Text style={styles.text1}>STT: {stt}</Text>
+                            <Text style={styles.text1}>Tên cửa hàng: {tenUpdataStore}</Text>
+                            <TouchableOpacity onPress={() => { handleAddress(UpdatadAddRess) }}>
+                                <Text style={styles.text1}>Vị trí: {UpdatadAddRess}</Text>
+                            </TouchableOpacity>
+
+                            <Text style={styles.text1}>Địa chỉ: {UpdataLocation}</Text>
+                            <Text style={styles.text1}>Số điện thoại: {UpdataNumberPhone} </Text>
+                            <Text style={styles.text1}>Ngày tạo: {UpdatangayTao.slice(0, 10)}</Text>
+                            <Text style={styles.text1}>Cập nhật gần nhất: {UpdatangayUpdate.slice(0, 10)}</Text>
+                        </View>
+
+                        <View style={{ alignItems: 'center' }}>
+                            <TouchableOpacity
+                                style={styles.btn_chucnang}
+                                onPress={() => {
+                                    setModleChiTiet(false)
+                                }}>
+                                <Text
+                                    style={{
+                                        color: '#FFFFFF',
+                                        fontSize: 14,
+                                        fontWeight: 'bold',
+                                    }}>
+                                    Đóng
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+            {/* Modal sua */}
+            <Modal animationType="slide" visible={modalUpdate} transparent={true}>
 
                 <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                     style={{ flex: 1, alignItems: 'center' }}
                 >
-                    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                    <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
                         <View style={styles.box3}>
                             <View
                                 style={{
@@ -553,7 +474,133 @@ function StoreManager() {
                                 }}>
                                 <TouchableOpacity
                                     onPress={() => {
-                                        setModleAdd(false);
+                                        TrangDL(),
+                                            setModleUpdate(false);
+                                    }}
+                                    style={styles.btn_back}>
+                                    <Image
+                                        style={{ width: 15, height: 15 }}
+                                        source={require('./icon/back.png')}
+                                    />
+                                </TouchableOpacity>
+                                <View style={{ justifyContent: 'center' }}>
+                                    <Text style={styles.title2}>Sửa thông tin cửa hàng</Text>
+                                </View>
+                                <View style={{ width: 30, height: 30 }}></View>
+                            </View>
+
+                            <View style={{ alignItems: 'center' }}>
+                                <View style={styles.inputAdd}>
+                                    <TextInput
+                                        style={{ width: 300, color: 'black' }}
+                                        defaultValue={tenUpdataStore}
+                                        placeholder="Nhập tên store"
+                                        placeholderTextColor={'#8391A1'}
+                                        onChangeText={text => {
+                                            setUpdataTenStore(text);
+                                        }}
+                                    />
+                                </View>
+                                <Text style={styles.textVali}>{validteTen}</Text>
+                                <View style={styles.inputAdd}>
+                                    <TextInput
+                                        style={{ width: 300, color: 'black' }}
+                                        defaultValue={UpdatadAddRess}
+                                        placeholder="Nhập vị trí"
+                                        placeholderTextColor={'#8391A1'}
+                                        onChangeText={text => {
+                                            setUpdataAddRess(text);
+                                        }}
+                                    />
+                                </View>
+                                <Text style={styles.textVali}>{validteAddress}</Text>
+                                <View style={styles.inputAdd}>
+                                    <TextInput
+                                        style={{ width: 300, color: 'black' }}
+                                        defaultValue={UpdataLocation}
+                                        placeholder="Nhập địa chỉ"
+                                        placeholderTextColor={'#8391A1'}
+                                        onChangeText={text => {
+                                            setUpdataLocation(text);
+                                        }}
+                                    />
+                                </View>
+                                <Text style={styles.textVali}>{validteLocation}</Text>
+                                <View style={styles.inputAdd}>
+                                    <TextInput
+                                        style={{ width: 300, color: 'black' }}
+                                        defaultValue={UpdataNumberPhone}
+                                        placeholder="Nhập số điện thoại"
+                                        placeholderTextColor={'#8391A1'}
+                                        onChangeText={text => {
+                                            setUpdataNumberPhone(text);
+                                        }}
+                                    />
+                                </View>
+                                <Text style={styles.textVali}>{validtePhoneNumber}</Text>
+
+                                <View style={styles.view1}>
+                                    <TouchableOpacity
+                                        style={styles.view2}
+                                        onPress={() => {
+                                            requestCameraPermission();
+                                        }}>
+                                        <Text style={{ textAlign: 'center' }}>Chọn ảnh</Text>
+                                    </TouchableOpacity>
+
+                                    {
+                                        UpdatatImg && (
+                                            <Image
+                                                source={{ uri: UpdatatImg }}
+                                                style={{ height: 100, width: 100, borderRadius: 5 }}
+                                            />
+                                        )}
+
+                                </View>
+                                <Text style={styles.textVali}>{validteImage}</Text>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        updateStoreHandler();
+
+
+                                    }}
+                                    style={{
+                                        width: 330,
+                                        height: 40,
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        backgroundColor: '#80B3FE',
+                                        borderRadius: 10,
+                                        marginTop: 40,
+                                    }}>
+                                    <Text style={{ color: '#FFFFFF' }}>Hoàn tất</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </ScrollView>
+                </KeyboardAvoidingView>
+
+            </Modal>
+
+            {/* Modal Thêm mới */}
+            <Modal animationType="slide" visible={modalAdd} transparent={true}>
+
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    style={{ flex: 1, alignItems: 'center' }}
+                >
+                    <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
+                        <View style={styles.box3}>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    margin: 10,
+                                }}>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        TrangDL(),
+                                            setModleAdd(false);
                                     }}
                                     style={styles.btn_back}>
                                     <Image
@@ -646,7 +693,7 @@ function StoreManager() {
                                         justifyContent: 'center',
                                         backgroundColor: '#80B3FE',
                                         borderRadius: 10,
-                                        marginTop: 140,
+                                        marginTop: 40,
                                     }}>
                                     <Text style={{ color: '#FFFFFF' }}>Hoàn tất</Text>
                                 </TouchableOpacity>

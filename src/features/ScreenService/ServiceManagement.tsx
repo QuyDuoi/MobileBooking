@@ -29,7 +29,10 @@ import { styles } from './styles/styleService';
 
 let idService = '';
 const ServiceManagement = () => {
-  const [Data, setData] = useState(null)
+  const [Data, setData] = useState([])
+  const [filteredData, setFilteredData] = useState([]);
+  const [searchName, setSearchName] = useState('')
+
   const [modalAdd, setModleAdd] = useState(false)
   const [modalUpdate, setModleUpdate] = useState(false)
   const [modalChiTiet, setModleChiTiet] = useState(false)
@@ -61,16 +64,6 @@ const ServiceManagement = () => {
   const [validteGia, setValiGia] = useState("")
   const [validteThoiLuong, setValiThoiLuong] = useState("")
 
-
-
-  //Ngày thực
-  const date = new Date
-  const ngayTao = date.toLocaleDateString('vi-VN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
-
   useEffect(() => {
     getData();
   }, []);
@@ -78,6 +71,7 @@ const ServiceManagement = () => {
   async function getData() {
     const data = await getListServices();
     setData(data.reverse());
+    setFilteredData(data.reverse())
   }
 
   // láy dữ liệu add vào Drop dịch vụ
@@ -293,8 +287,25 @@ const ServiceManagement = () => {
     }
 
   }
+  //Chuc nang search
+  const handleSearch = (text: string) => {
+    setSearchName(text);
+
+    if (text) {
+      // Lọc dữ liệu theo tên
+      const filtered = Data.filter(item =>
+        item.nameService.toLowerCase().includes(text.toLowerCase())
+      );
+      setFilteredData(filtered);
+    } else {
+      // Nếu input rỗng, hiển thị lại toàn bộ dữ liệu
+      setFilteredData(Data);
+      console.log(searchName);
+    }
+  };
 
   // const formattedPrice = currency(gia, { symbol: 'VND ', separator: ',', decimal: '.' }).format();
+
 
   // item flatlis
   const renderItem = ({ item, index }: any) => (
@@ -302,16 +313,28 @@ const ServiceManagement = () => {
       onPress={() => { setModleChiTiet(true), setSTT(index + 1), setUpdataIdDV(item._id), setUpdataTenDV(item.nameService), setUpdataDanhMuc(item.id_category), setUpdataMoTa(item.descreption), setUpdataGia(item.price), setUpdataThoiLuong(item.duration), setUpdataNgayTao(item.createdAt), setUpdataNgayUpdate(item.updatedAt) }}
       style={styles.item}
     >
-      <View style={{ justifyContent: 'center' }}>
-        <Text style={{ color: 'black', fontWeight: 'bold', fontSize: 20 }}>{index + 1}</Text>
+      <View style={{ flexDirection: 'row' }}>
+
+        <View style={{ justifyContent: 'center' }}>
+          <Text style={styles.text1}>{index + 1}</Text>
+        </View>
+
+        <View style={{ justifyContent: 'center' }}>
+
+
+          <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 5 }}>
+            <Text style={styles.text}>Tên dịch vụ: {item.nameService}</Text>
+          </View>
+
+
+          <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 5 }}>
+            <Text style={styles.text}>Giá: {currency(item.price, { symbol: ' ', separator: ',', precision: 0 }).format()} VND</Text>
+          </View>
+
+        </View>
       </View>
-      <View style={{ justifyContent: 'center' }}>
-        <Text style={styles.text}>Tên dịch vụ: {item.nameService}</Text>
-        <Text style={styles.text}>Giá: {currency(item.price, { symbol: ' ', separator: ',', precision: 0 }).format()} VND</Text>
-        {/* <Text style={style.text}>Thời Lượng: {item.thoiLuong}</Text>
-                <Text style={style.text}>Ngày tạo: {item.ngayTao}</Text> */}
-      </View>
-      <View style={{ height: 70, alignItems: 'center', justifyContent: 'center' }}>
+
+      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
         <TouchableOpacity onPress={() => {
           deleteSeviceHandler(idService = item._id)
         }}>
@@ -327,226 +350,229 @@ const ServiceManagement = () => {
 
   return (
     <View style={styles.boby}>
-      <ImageBackground source={require('./anh/image.png')} style={styles.top}>
-        <View style={{ alignItems: 'center' }}>
-          {/* Tìm kiếm */}
-          <View style={styles.inputSearch}>
-            <TextInput
-              style={{ width: 300 }}
-              placeholder="Tìm kiếm dịch vụ"
-              placeholderTextColor={'#8391A1'}
-            />
 
-            <View style={{ justifyContent: 'center' }}>
-              <Image
-                style={{ width: 20, height: 20 }}
-                source={require('./icon/search.png')}
-              />
-            </View>
-          </View>
+      <Image source={require('./anh/image.png')} style={styles.trangTri} />
+      <View style={{
+        marginHorizontal: 30,
+        marginVertical: 15,
+      }}>
+        <TextInput
+          style={styles.inputSearch}
+          placeholder="Tìm kiếm tên dịch vụ"
+          placeholderTextColor={'#8391A1'}
+          onChangeText={text => handleSearch(text)}
+        />
+
+        <View style={styles.searchTen}>
+          <Image
+            style={{ width: 20, height: 20 }}
+            source={require('./icon/search.png')}
+          />
         </View>
+      </View>
 
-        <View style={{ alignItems: 'center', marginTop: 40 }}>
+      <View style={styles.box4}>
+        <View style={{ alignItems: 'center' }}>
           <Text style={styles.title}>
             Danh sách dịch vụ
           </Text>
         </View>
-
-        <View>
-          <FlatList
-            style={{ height: "170%", marginTop: 20 }}
-            data={Data}
-            renderItem={renderItem}
-          // keyExtractor={(item, index) => index.toString()}
-          />
-          {/* Modal Chi tiết */}
-          <Modal
-            animationType='slide'
-            visible={modalChiTiet
-            }
-            transparent={true}>
-            <View style={styles.box1}>
-              <View style={styles.box2}>
-                <Text style={styles.title}>Chi tiết dịch vụ</Text>
-                <View style={{ marginLeft: 30, height: '70%' }}>
-                  <Text style={styles.text}>STT: {stt}</Text>
-                  <Text style={styles.text}>Tên dịch vụ: {tenUpdataDV}</Text>
-                  <Text style={styles.text}>Danh mục: {UpdatadanhMuc}</Text>
-                  <Text style={styles.text}>Mô tả: {UpdatamoTa}</Text>
-                  <Text style={styles.text}>Giá: {currency(Updatagia, { symbol: ' ', separator: ',', precision: 0 }).format()} VND</Text>
-                  <Text style={styles.text}>Thời Lượng: {UpdatathoiLuong} phút</Text>
-                  <Text style={styles.text}>Ngày tạo: {UpdatangayTao.slice(0, 10)}</Text>
-                  <Text style={styles.text}>Cập nhật gần nhất: {UpdatangayUpdate.slice(0, 10)}</Text>
-                </View>
-
-                <View style={{ alignItems: 'center', marginTop: 40 }}>
-                  <TouchableOpacity
-                    style={styles.btn_chucnang}
-                    onPress={() => {
-                      setModleChiTiet(false), TrangDL();
-                    }}>
-                    <Text
-                      style={{
-                        color: '#FFFFFF',
-                        fontSize: 14,
-                        fontWeight: 'bold',
-                      }}>
-                      Đóng
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
+        <FlatList
+          style={{}}
+          data={filteredData}
+          renderItem={renderItem}
+          ListEmptyComponent={<Text style={styles.title2}>Không có kết quả</Text>}
+        // keyExtractor={(item, index) => index.toString()}
+        />
+        <View
+          style={{
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+          }}>
+          <TouchableOpacity
+            style={styles.btnThem}
+            onPress={() => {
+              setModleAdd(true);
+            }}>
+            <Image
+              style={{ width: 50, height: 50 }}
+              source={require('./icon/add-blue.png')}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+      {/* Modal Chi tiết */}
+      <Modal
+        animationType='slide'
+        visible={modalChiTiet
+        }
+        transparent={true}>
+        <View style={styles.box1}>
+          <View style={styles.box2}>
+            <Text style={styles.title}>Chi tiết dịch vụ</Text>
+            <View style={{ margin: 20 }}>
+              <Text style={styles.text}>STT: {stt}</Text>
+              <Text style={styles.text}>Tên dịch vụ: {tenUpdataDV}</Text>
+              <Text style={styles.text}>Danh mục: {UpdatadanhMuc}</Text>
+              <Text style={styles.text}>Mô tả: {UpdatamoTa}</Text>
+              <Text style={styles.text}>Giá: {currency(Updatagia, { symbol: ' ', separator: ',', precision: 0 }).format()} VND</Text>
+              <Text style={styles.text}>Thời Lượng: {UpdatathoiLuong} phút</Text>
+              <Text style={styles.text}>Ngày tạo: {UpdatangayTao.slice(0, 10)}</Text>
+              <Text style={styles.text}>Cập nhật gần nhất: {UpdatangayUpdate.slice(0, 10)}</Text>
             </View>
-          </Modal>
 
-          {/* Modal Sửa */}
-          <Modal animationType="slide" visible={modalUpdate} transparent={true}>
-            <KeyboardAvoidingView
-              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-              style={{ flex: 1, alignItems: 'center' }}
-            >
-              <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+            <View style={{ alignItems: 'center', marginTop: 40 }}>
+              <TouchableOpacity
+                style={styles.btn_chucnang}
+                onPress={() => {
+                  setModleChiTiet(false), TrangDL();
+                }}>
+                <Text
+                  style={{
+                    color: '#FFFFFF',
+                    fontSize: 14,
+                    fontWeight: 'bold',
+                  }}>
+                  Đóng
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal Sửa */}
+      <Modal animationType="slide" visible={modalUpdate} transparent={true}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{ flex: 1, alignItems: 'center' }}
+        >
+          <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
+            <View
+              style={styles.box3}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  margin: 10,
+                }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setModleUpdate(false), TrangDL();
+                  }}
+                  style={styles.btn_back}>
+                  <Image
+                    style={{ width: 15, height: 15 }}
+                    source={require('./icon/back.png')}
+                  />
+                </TouchableOpacity>
+                <View style={{ justifyContent: 'center' }}>
+                  <Text style={styles.title2}>Sửa dịch vụ</Text>
+                </View>
+                <View style={{ width: 30, height: 30 }}></View>
+              </View>
+
+              <View style={{ alignItems: 'center' }}>
+                <View style={styles.inputAdd}>
+                  <TextInput
+                    style={{ width: 300, color: 'black' }}
+                    defaultValue={tenUpdataDV}
+                    placeholder="Nhập tên danh mục"
+                    placeholderTextColor={'#8391A1'}
+                    onChangeText={text => {
+                      setUpdataTenDV(text);
+                    }}
+                  />
+                </View>
+                <Text style={styles.textVali}>{validteTen}</Text>
+
                 <View
                   style={{
-                    width: 350,
-                    height: 700,
-                    backgroundColor: 'white',
-                    borderWidth: 1,
-                    borderRadius: 10,
+                    position: 'relative',
+                    width: 330,
+                    height: 45,
+                    marginTop: 25,
+                    marginBottom: 5,
                   }}>
-                  <View
+                  <DropDownPicker
+                    open={open}
+                    value={value}
+                    items={items}
+                    setOpen={setOpen}
+                    setValue={setValue}
+                    setItems={setItems}
+                    placeholder="Vui lòng chọn danh mục"
+                    onChangeValue={(text: any) => {
+                      setUpdataDanhMuc(text);
+                      console.log(text);
+                    }}
                     style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      margin: 10,
-                    }}>
-                    <TouchableOpacity
-                      onPress={() => {
-                        setModleUpdate(false), TrangDL();
-                      }}
-                      style={styles.btn_back}>
-                      <Image
-                        style={{ width: 15, height: 15 }}
-                        source={require('./icon/back.png')}
-                      />
-                    </TouchableOpacity>
-                    <View style={{ justifyContent: 'center' }}>
-                      <Text style={styles.title2}>Sửa dịch vụ</Text>
-                    </View>
-                    <View style={{ width: 30, height: 30 }}></View>
-                  </View>
-
-                  <View style={{ alignItems: 'center' }}>
-                    <View style={styles.inputAdd}>
-                      <TextInput
-                        style={{ width: 300, color: 'black' }}
-                        defaultValue={tenUpdataDV}
-                        placeholder="Nhập tên danh mục"
-                        placeholderTextColor={'#8391A1'}
-                        onChangeText={text => {
-                          setUpdataTenDV(text);
-                        }}
-                      />
-                    </View>
-                    <Text style={styles.textVali}>{validteTen}</Text>
-
-                    <View
-                      style={{
-                        position: 'relative',
-                        width: 330,
-                        height: 45,
-                        marginTop: 25,
-                        marginBottom: 5,
-                      }}>
-                      <DropDownPicker
-                        open={open}
-                        value={value}
-                        items={items}
-                        setOpen={setOpen}
-                        setValue={setValue}
-                        setItems={setItems}
-                        placeholder="Vui lòng chọn danh mục"
-                        onChangeValue={(text: any) => {
-                          setUpdataDanhMuc(text);
-                          console.log(text);
-                        }}
-                        style={{
-                          backgroundColor: '#F7F8F9',
-                          borderColor: '#F7F8F9',
-                        }}
-                        placeholderStyle={{ color: '#8391A1' }}
-                      />
-                    </View>
-                    <Text style={styles.textVali}>{validteDanhMuc}</Text>
-                    <View style={styles.inputAdd}>
-                      <TextInput
-                        style={{ width: 300, color: 'black' }}
-                        defaultValue={UpdatamoTa}
-                        placeholder="Nhập mô tả"
-                        placeholderTextColor={'#8391A1'}
-                        onChangeText={text => {
-                          setUpdataMoTa(text);
-                        }}
-                      />
-                    </View>
-                    <Text style={styles.textVali}>{validteMoTa}</Text>
-                    <View style={styles.inputAdd}>
-                      <TextInput
-                        style={{ width: 300, color: 'black' }}
-                        defaultValue={String(Updatagia)}
-                        placeholder="Nhập giá"
-                        placeholderTextColor={'#8391A1'}
-                        onChangeText={text => {
-                          setUpdataGia(text);
-                        }}
-                      />
-                    </View>
-                    <Text style={styles.textVali}>{validteGia}</Text>
-                    <View style={styles.inputAdd}>
-                      <TextInput
-                        style={{ width: 300, color: 'black' }}
-                        defaultValue={UpdatathoiLuong}
-                        placeholder="Nhập thời lượng ( Phút )"
-                        placeholderTextColor={'#8391A1'}
-                        onChangeText={text => {
-                          setUpdataThoiLuong(text);
-                        }}
-                      />
-                    </View>
-                    <Text style={styles.textVali}>{validteThoiLuong}</Text>
-
-                    <TouchableOpacity
-                      onPress={() => {
-                        updateServiceHandler();
-                      }}
-                      style={{
-                        width: 330,
-                        height: 40,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: '#80B3FE',
-                        borderRadius: 10,
-                        marginTop: 150,
-                      }}>
-                      <Text style={{ color: '#FFFFFF' }}>Hoàn tất</Text>
-                    </TouchableOpacity>
-                  </View>
+                      backgroundColor: '#F7F8F9',
+                      borderColor: '#F7F8F9',
+                    }}
+                    placeholderStyle={{ color: '#8391A1' }}
+                  />
                 </View>
-              </ScrollView>
-            </KeyboardAvoidingView>
-          </Modal>
-        </View>
-        <TouchableOpacity
-          style={styles.btn_add}
-          onPress={() => {
-            setModleAdd(true);
-          }}>
-          <Image
-            style={{ width: 50, height: 50 }}
-            source={require('./icon/add-blue.png')}
-          />
-        </TouchableOpacity>
-      </ImageBackground>
+                <Text style={styles.textVali}>{validteDanhMuc}</Text>
+                <View style={styles.inputAdd}>
+                  <TextInput
+                    style={{ width: 300, color: 'black' }}
+                    defaultValue={UpdatamoTa}
+                    placeholder="Nhập mô tả"
+                    placeholderTextColor={'#8391A1'}
+                    onChangeText={text => {
+                      setUpdataMoTa(text);
+                    }}
+                  />
+                </View>
+                <Text style={styles.textVali}>{validteMoTa}</Text>
+                <View style={styles.inputAdd}>
+                  <TextInput
+                    style={{ width: 300, color: 'black' }}
+                    defaultValue={String(Updatagia)}
+                    placeholder="Nhập giá"
+                    placeholderTextColor={'#8391A1'}
+                    onChangeText={text => {
+                      setUpdataGia(text);
+                    }}
+                  />
+                </View>
+                <Text style={styles.textVali}>{validteGia}</Text>
+                <View style={styles.inputAdd}>
+                  <TextInput
+                    style={{ width: 300, color: 'black' }}
+                    defaultValue={UpdatathoiLuong}
+                    placeholder="Nhập thời lượng ( Phút )"
+                    placeholderTextColor={'#8391A1'}
+                    onChangeText={text => {
+                      setUpdataThoiLuong(text);
+                    }}
+                  />
+                </View>
+                <Text style={styles.textVali}>{validteThoiLuong}</Text>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    updateServiceHandler();
+                  }}
+                  style={{
+                    width: 330,
+                    height: 40,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: '#80B3FE',
+                    borderRadius: 10,
+                    marginTop: 40,
+                  }}>
+                  <Text style={{ color: '#FFFFFF' }}>Hoàn tất</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </Modal>
+
 
       {/* Modal Thêm mới */}
       <Modal animationType="slide" visible={modalAdd} transparent={true}>
@@ -554,7 +580,7 @@ const ServiceManagement = () => {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{ flex: 1, alignItems: 'center' }}
         >
-          <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
             <View
               style={styles.box3}>
               <View
@@ -663,7 +689,7 @@ const ServiceManagement = () => {
                     justifyContent: 'center',
                     backgroundColor: '#80B3FE',
                     borderRadius: 10,
-                    marginTop: 150,
+                    marginTop: 40,
                   }}>
                   <Text style={{ color: '#FFFFFF' }}>Hoàn tất</Text>
                 </TouchableOpacity>

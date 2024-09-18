@@ -1,8 +1,9 @@
 import { api } from "./api";
 
-export const getListServices = async()=>{
+export const getListServices = async () => {
     try {
         console.log("Bắt đầu lấy dữ liệu Service")
+        const response = await fetch(api.seviceGetList);
         const response = await fetch(api.seviceGetList);
         const data = await response.json();
         console.log("Lấy dữ liệu Service thành công")
@@ -12,14 +13,14 @@ export const getListServices = async()=>{
         console.log(error);
     }
 }
-export const addService = async(service)=>{
+export const addService = async (service) => {
     try {
         console.log("Bắt đầu thêm mới Service ")
         const response = await fetch(api.seviceAdd, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                 'Accept': 'application/json'
+                'Accept': 'application/json'
             },
             body: JSON.stringify(service),
         });
@@ -29,11 +30,10 @@ export const addService = async(service)=>{
     } catch (error) {
         console.log('lỗi khi thêm mới Service')
         return false
-        console.log(error);
     }
 }
 
-export const Updatesevice = async(id, service)=>{
+export const Updatesevice = async (id, service) => {
     try {
         console.log("Bắt đầu cập nhật Service")
         const response = await fetch(`${api.seviceUpdate}/${id}`, {
@@ -53,7 +53,7 @@ export const Updatesevice = async(id, service)=>{
     }
 }
 
-export const deleteSevice = async(id)=>{
+export const deleteSevice = async (id) => {
     try {
         console.log("Bắt đầu xóa Service")
         const response = await fetch(`${api.seviceDelete}/${id}`, {
