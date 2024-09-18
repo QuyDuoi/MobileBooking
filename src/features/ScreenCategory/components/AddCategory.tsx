@@ -3,36 +3,37 @@ import React, { useState } from 'react'
 
 const AddCategory = ({onCanler,onAdd}) => {
   const [nameCategory, setnameCategory] = useState('')
-  const [validate, setvalidate] = useState('Nhận tên danh mục mới')
+  const [validate, setvalidate] = useState(false)
   function addCategory(){
     const newCategory = {
-        nameCategory: nameCategory
+        nameCategory: nameCategory,
+        id_store:'66e2462d7265add6ee481b7b'
     }
     if(nameCategory.trim() === ''){
-      setvalidate('Vui lòng nhập tên danh mục')
+      setvalidate(true)
       return false
     }
     onAdd(newCategory)
   }
   return (
     <View style={styles.container}>
-    <ImageBackground
-      style={[styles.imgHeader, {justifyContent: 'center'}]}
-      source={require('./src/img/backgrour.png')}>
+  
       <View
         style={{
           height: 280,
           backgroundColor: 'white',
           marginHorizontal: 30,
           borderRadius: 12,
-        }}>
+          paddingHorizontal:32,
+
+}}>
         <Text
           style={{
             fontSize: 20,
             fontWeight: 'bold',
             color: 'black',
             textAlign: 'center',
-            marginTop: 24,
+            marginTop: 34,
           }}>
           Thêm Danh mục mới
         </Text>
@@ -43,14 +44,14 @@ const AddCategory = ({onCanler,onAdd}) => {
             color: 'black',
             marginStart: 20,
             marginTop: 24,
-            marginBottom: 4,
+            marginBottom: 8,
           }}>
-          Name
+          Tên danh mục
         </Text>
         <TextInput
           value={nameCategory}
           onChangeText={text=>{setnameCategory(text)}}
-          placeholder={validate}
+          placeholder='Nhập tên danh mục'
           style={{
             borderWidth: 1,
             borderColor: '#73A2FF',
@@ -59,6 +60,7 @@ const AddCategory = ({onCanler,onAdd}) => {
             paddingStart: 16,
           }}
         />
+        <Text style={{color:'red',fontSize:12,marginStart:24,marginTop:4}}>{validate?'Vui lòng nhập tên danh mục':''}</Text>
         <View style={{ flexDirection:'row',justifyContent:'space-around',marginTop:32}}>
           <TouchableOpacity
             onPress={() =>onCanler()}>
@@ -83,7 +85,6 @@ const AddCategory = ({onCanler,onAdd}) => {
           </TouchableOpacity>
         </View>
       </View>
-    </ImageBackground>
   </View>
   )
 }
@@ -93,6 +94,8 @@ export default AddCategory
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        justifyContent: 'center',
+        alignItems:'center'
       },
       imgHeader: {
         width: '100%',

@@ -3,10 +3,10 @@ import React, { useState } from 'react'
 
 const UpdateCategory = ({date,Categoryname,onCandel,onChangeText,onUpdateHanderl}) => {
 
-    const [validateName, setvalidateName] = useState('Nhập tên danh mục cập nhật');
+    const [validateName, setvalidateName] = useState(false);
     function  updateCategory(){
         if(Categoryname.trim() === ''){
-            setvalidateName('Tên danh mục không được để trống');
+            setvalidateName(true);
             return false;
         }
         onUpdateHanderl();
@@ -15,12 +15,13 @@ const UpdateCategory = ({date,Categoryname,onCandel,onChangeText,onUpdateHanderl
     <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                     <Text style={styles.modalTile}>Chỉnh sửa danh mục</Text>
-                    <Text style={styles.labelInput}>Name</Text>
+                    <Text style={styles.labelInput}>Tên danh mục</Text>
                     <TextInput
                         value={Categoryname}
-                        placeholder={validateName}
+                        placeholder='Nhập tên danh mục'
                         onChangeText={text=>onChangeText(text)}
                         style={styles.inputContainer}/>
+                        <Text style={{color:'red',fontSize:12,marginStart:24,marginTop:validateName?4:0}}>{validateName?'Vui lòng nhập tên danh mục':''}</Text>
                      <Text style={{marginStart:24,marginTop:12,fontSize:16}}>Ngày tạo : {date.slice(0,10)}</Text>
                     <View style={styles.actionContainer}>
                         <TouchableOpacity
@@ -49,11 +50,13 @@ export default UpdateCategory
 const styles = StyleSheet.create({
     modalContainer:{
         flex:1,
-        justifyContent:'center'
+        justifyContent:'center',
+        alignItems:'center'
     },
     modalContent:{
-        height: 280,
+        height: 300,
         backgroundColor: 'white',
+        paddingHorizontal:32,
         marginHorizontal: 30,
         borderRadius: 12,
         elevation: 5,
