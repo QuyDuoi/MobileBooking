@@ -29,6 +29,11 @@ function DrawerNavigator(): React.JSX.Element {
           component={StoreManager}
           options={{title: 'Cửa hàng'}}
         />
+        <Drawer.Screen
+          name="Booking"
+          component={BookingManagement}
+          options={{title: 'Lịch đặt'}}
+        />
       </Drawer.Navigator>
     </NavigationContainer>
   );

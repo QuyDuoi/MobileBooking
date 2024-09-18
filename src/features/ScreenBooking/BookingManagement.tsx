@@ -17,7 +17,7 @@ import {
 import ListBooking from './components/ListBooking';
 import AddBooking from './components/AddBooking';
 import UpdateBooking from './components/UpdateBooking';
-import MultiSelectComponent from './components/MultiSelectComponent';
+// import MultiSelectComponent from './components/MultiSelectComponent';
 import { deleteBooking, getListBooking } from './util/api';
 import { ScrollView } from 'react-native-gesture-handler';
 import DropdownStore from './components/DropdownStore';

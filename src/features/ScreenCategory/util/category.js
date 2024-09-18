@@ -15,6 +15,7 @@ export const getListCategorys = async()=>{
 export const addCategory = async(category)=>{
     try {
         console.log("Bắt đầu thêm mới Category")
+        console.log(category);
         const response = await fetch(api.categoryAdd, {
             method: 'POST',
             headers: {
@@ -25,11 +26,11 @@ export const addCategory = async(category)=>{
         });
         const data = await response.json();
         console.log("Thêm mới Category thành công")
-        return true
+        return data;
     } catch (error) {
         console.log('lỗi khi thêm mới category')
-        return false
         console.log(error);
+        return false
     }
 }
 
@@ -45,11 +46,11 @@ export const updateCategory = async(id, category)=>{
         });
         const data = await response.json();
         console.log("Cập nhật Category thành công")
-        return true
+        return data;
     } catch (error) {
         console.log('lỗi khi cập nhật category')
-        return false
         console.log(error);
+        return false
     }
 }
 
@@ -60,7 +61,11 @@ export const deleteCategory = async(id)=>{
             method: 'DELETE',
         });
         console.log("Xóa Category thành công")
-        return true
+        if (response.ok){
+            return true;
+        } else {
+            console.log("Lỗi xóa cửa hàng!");
+        }
     } catch (error) {
         console.log('lỗi khi xóa category')
         console.log(error);

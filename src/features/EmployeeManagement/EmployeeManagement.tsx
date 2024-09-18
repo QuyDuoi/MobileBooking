@@ -14,6 +14,7 @@ import CustomModalAddEmployee from '../../customcomponent/CustomModalAddEmployee
 import {useDispatch, useSelector} from 'react-redux';
 import {addNewEmployee} from '../../store/employeeSlice';
 import type {AppDispatch} from '../../store/store';
+import Employee from '../../services/models/EmployeeModel';
 
 function EmployeeManagement(): React.JSX.Element {
   const [modalLuaChon, setModalLuaChon] = useState(false);
@@ -26,7 +27,7 @@ function EmployeeManagement(): React.JSX.Element {
   const [catNhapDuLieu, setCapNhatDuLieu] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
 
-  const handleAddEmployee = (employee) => {
+  const handleAddEmployee = (employee: Employee) => {
     dispatch(addNewEmployee(employee));
   };
 
