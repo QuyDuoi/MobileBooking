@@ -11,7 +11,9 @@ function CustomModalChoise({visible, onClose, onShow}) {
           <Icon name="chevron-left" size={18} color={'black'} />
         </TouchableOpacity>
         <Text style={styles.text}>Chọn chức năng</Text>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity
+          onPress={() => onShow('modalUpdate')}
+          style={styles.button}>
           <Text style={styles.text1}>Cập nhật thông tin</Text>
         </TouchableOpacity>
         <TouchableOpacity

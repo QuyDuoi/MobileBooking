@@ -2,10 +2,15 @@ import React from 'react';
 import {Modal, Text, TouchableOpacity, View, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {styles} from '../styles/styleEmployee';
+import { IPV4 } from '../services/api';
 
 function CustomModalInfo({visible, onClose, infoEmployee}) {
+  if (!infoEmployee) {
+    return null;
+  }
+
   const employeeImage = infoEmployee.image
-    ? infoEmployee.image.replace('localhost', '192.168.1.8')
+    ? infoEmployee.image.replace('localhost', IPV4)
     : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
 
   return (

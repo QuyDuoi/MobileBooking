@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { getListEmployee, addEmployee } from '../services/api'
+import { getListEmployee, addEmployee, updateEmployee } from '../services/api'
 
 export interface Employee {
     _id?: string;
@@ -30,14 +30,28 @@ export const fetchEmployees = createAsyncThunk('employees/fetchEmployees', async
     return data; // Trả về dữ liệu
 });
 
-export const addNewEmployee = createAsyncThunk('employees/addEmployee', async (employee: Employee, thunkAPI) => {
+export const addNewEmployee = createAsyncThunk('employees/addEmployee', async (formData: FormData, thunkAPI) => {
     try {
-      const data = await addEmployee(employee);
+      const data = await addEmployee(formData);
       return data;
     } catch (error) {
+        console.log('Lỗi thêm mới:', error);
         return thunkAPI.rejectWithValue(error.message || 'Error adding employee');
     }
-  })
+  });
+
+export const updateEmployeeThunk = createAsyncThunk(
+    'employees/updateEmployee', 
+    async ({ id, formData }: { id: string, formData: FormData }, thunkAPI) => {
+        try {
+        const data = await updateEmployee(id, formData); // Gọi hàm updateEmployee từ API
+        return data;
+        } catch (error) {
+        console.log('Lỗi cập nhật: ', error);
+        return thunkAPI.rejectWithValue(error.message || 'Error updating employee');
+        }
+    }
+);
 
 const employeeSlice = createSlice({
     name: 'employees',
@@ -59,12 +73,23 @@ const employeeSlice = createSlice({
                 state.error = action.error.message || 'Could not fetch employees';
             })
             .addCase(addNewEmployee.fulfilled, (state, action: PayloadAction<Employee>) => {
-                state.employees.push(action.payload); // Thêm nhân viên mới vào danh sách
+                state.employees.unshift(action.payload); // Thêm nhân viên mới vào danh sách
                 state.status = 'succeeded';
               })
             .addCase(addNewEmployee.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.payload as string || 'Error adding employee';
+            })
+            .addCase(updateEmployeeThunk.fulfilled, (state, action: PayloadAction<Employee>) => {
+                const index = state.employees.findIndex(emp => emp._id === action.payload._id);
+                if (index !== -1) {
+                    state.employees[index] = action.payload; // Cập nhật thông tin nhân viên trong danh sách
+                }
+                state.status = 'succeeded';
+            })
+            .addCase(updateEmployeeThunk.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload as string || 'Error updating employee';
             });
     },
 });

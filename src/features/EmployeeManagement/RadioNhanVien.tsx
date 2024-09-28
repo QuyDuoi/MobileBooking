@@ -24,10 +24,11 @@ export default function Radio({ choiseRole, userRole }) {
             setSelectedId('2');
         } else {
             setSelectedId('1');
+            choiseRole('admin');
         }
     }, [userRole]);
 
-    const handlePress = (id) => {
+    const handlePress = (id: string) => {
         setSelectedId(id);
         const selectedValue = radioButtons.find(button => button.id === id)?.value;
         choiseRole(selectedValue);
