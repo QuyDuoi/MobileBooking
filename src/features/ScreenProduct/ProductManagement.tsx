@@ -1,46 +1,52 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, Button, Image, ImageBackground, KeyboardAvoidingView, Linking, Modal, PermissionsAndroid, Platform, Pressable, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
-import { FlatList, GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
-import { addStore, deleteStore, getListStore, UpdateStore } from './util/store';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { styles } from './styles/styleStore';
-let idService = '';
-function StoreManager() {
-    const [Data, setData] = useState([])
-    const [filteredData, setFilteredData] = useState([]);
+import { Alert, FlatList, Image, KeyboardAvoidingView, Modal, Platform, Pressable, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { styles } from './styles/styleProduct';
+import { ScrollView } from 'react-native-gesture-handler';
+import { addProduct, deleteProduct, getListProduct, UpdateProduct } from './util/product';
+import { launchImageLibrary } from 'react-native-image-picker';
 
-    const [modalChiTiet, setModleChiTiet] = useState(false)
+
+
+
+//Hình ảnh, tên sản phẩm, số lượng hiện có, mô tả, giá. (Quản lý sản phẩm)
+function ProducManagement() {
+
     const [modalAdd, setModleAdd] = useState(false)
     const [modalUpdate, setModleUpdate] = useState(false)
+    const [modalChiTiet, setModleChiTiet] = useState(false)
 
-    const [stt, setSTT] = useState("")
+    const [Data, setData] = useState([])
+    const [filteredData, setFilteredData] = useState([]);
     const [names, setNames] = useState([])
     const [searchName, setSearchName] = useState('')
 
-    const [idUpdataStore, setUpdataIdStore] = useState("")
-    const [tenUpdataStore, setUpdataTenStore] = useState("")
-    const [UpdatadAddRess, setUpdataAddRess] = useState("")
-    const [UpdataLocation, setUpdataLocation] = useState("")
-    const [UpdataNumberPhone, setUpdataNumberPhone] = useState('')
-    const [UpdatatImg, setUpdataImg] = useState(null)
-    const [UpdatangayTao, setUpdataNgayTao] = useState("")
-    const [UpdatangayUpdate, setUpdataNgayUpdate] = useState("")
-
-    const [name, setName] = useState('')
-    const [addRess, setAddRess] = useState('')
-    const [location, setLocation] = useState('')
-    const [phoneNumber, setPhoneNumber] = useState('')
+    const [name, setName] = useState("")
     const [image, setImage] = useState(null)
+    const [price, setPrice] = useState("")
+    const [soLuong, setSoLuong] = useState("")
+    const [moTa, setMoTa] = useState("")
+    const id_Store = "66f4ed8f30557ca7844dd807"
 
-    const [validteTen, setValidteTen] = useState("")
-    const [validteAddress, setValiAddRess] = useState("")
-    const [validteLocation, setValiLocation] = useState("")
-    const [validtePhoneNumber, setValiPhoneNumber] = useState("")
+    const [id_Sp, setId_Sp] = useState("")
+    const [updateName, setUpdateName] = useState("")
+    const [updateImage, setUpdateImage] = useState(null)
+    const [updatePrice, setUpdatePrice] = useState("")
+    const [updateSoLuong, setUpdateSoLuong] = useState("")
+    const [updateMoTa, setUpdateMoTa] = useState("")
+    const [updatangayTao, setUpdataNgayTao] = useState("")
+    const [updatangayUpdate, setUpdataNgayUpdate] = useState("")
+
+
+    const [validteName, setValidteName] = useState("")
+    const [validteGia, setValiGia] = useState("")
+    const [validteSoLuong, setValiSoLuong] = useState("")
+    const [validteMota, setValiMoTa] = useState("")
     const [validteImage, setValiImage] = useState("")
 
 
-    const employeeImage = UpdatatImg
-        ? UpdatatImg.replace('localhost', '192.168.2.10')
+
+    const employeeImage = updateImage
+        ? updateImage.replace('localhost', '192.168.2.10')
         : 'https://media.istockphoto.com/id/1499402594/vector/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg?s=612x612&w=0&k=20&c=05AjriPMBaa0dfVu7JY-SGGkxAHcR0yzIYyxNpW4RIY=';
 
 
@@ -58,235 +64,32 @@ function StoreManager() {
             } else if (response.assets && response.assets.length > 0) {
                 const imageUri: any = response.assets[0].uri; // Lấy link ảnh
                 // console.log('Link ảnh: ', imageUri);
-                setImage(imageUri); // Chỉ truyền chuỗi `imageUri`
-                setUpdataImg(imageUri)
+                setImage(imageUri);
+                setUpdateImage(imageUri)
+                // Chỉ truyền chuỗi `imageUri`
             } else {
                 console.log('No assets found in response');
             }
         });
     };
 
+
     useEffect(() => {
         getData();
     }, []);
-    // hàm lấy dữ liệu store
+
     async function getData() {
-        const data = await getListStore();
-        setData(data.reverse());
-        setFilteredData(data.reverse())
-
-        const reversedData = data.reverse();
-        const mapTen = reversedData.map(item => item.name);
-        setNames(mapTen)
-    }
-
-    // chuwcs nang xoa
-    function deleteStoreHandler(id: any) {
-        Alert.alert(
-            'Xác nhận xóa',
-            'Bạn có chắc muốn xóa cửa hàng này?',
-            [
-                {
-                    text: 'Có',
-                    onPress: async () => {
-                        const isDelete = await deleteStore(id);
-                        if (isDelete) {
-                            Alert.alert('Xóa thông tin cửa hàng thành công');
-                            getData();
-                        } else {
-                            Alert.alert('Lỗi khi xóa cửa hàng vui lòng thử lại sau ');
-                        }
-                    },
-                },
-                {
-                    text: 'Không',
-                    onPress: () => console.log('Cancel Pressed'),
-                    style: 'cancel',
-                },
-            ],
-            { cancelable: false },
-        );
-    }
-    // click vào vị trí
-    const handleAddress = (vitri: any) => {
-        // Mở URL khi nhấn vào link
-        Linking.openURL(vitri);
-    };
-    const kTraAdd = () => {
-        let check = true
-        if (name === "") {
-            setValidteTen("Vui lòng nhập tên cửa hàng")
-            check = false
-        } else if (name.length < 2) {
-            setValidteTen("Độ dài phải hơn 2 ký tự")
-            check = false
-        } else if (names.includes(name)) {
-            setValidteTen("Tên cửa hàng đã tồn tại")
-            check = false
+        const data = await getListProduct();
+        if (data) {
+            setData(data.reverse());
+            setFilteredData(data.reverse());
+            const reversedData = data.reverse();
+            const mapTen = reversedData.map(item => item.name);
+            setNames(mapTen)
         } else {
-            setValidteTen("")
-
-        }
-
-        if (addRess === "") {
-            setValiAddRess("Vui lòng nhập vị trí cửa hàng")
-            check = false
-        } else if (addRess.length < 10) {
-            setValiAddRess("Độ dài phải hơn 10 ký tự")
-            check = false
-        } else {
-            setValiAddRess("")
-        }
-
-        if (location === "") {
-            setValiLocation("Vui lòng nhập địa chỉ cửa hàng")
-            check = false
-        } else {
-            setValiLocation("")
-
-        }
-
-        if (phoneNumber === "") {
-            setValiPhoneNumber("Vui lòng nhập số điện thoại")
-            check = false
-        } else if (isNaN(Number(phoneNumber))) {
-            setValiPhoneNumber("Phải phải số")
-            check = false
-        } else if (phoneNumber.length < 9) {
-            setValiPhoneNumber("Độ dài phải hơn 9 ký tự")
-            check = false
-        } else {
-            setValiPhoneNumber("")
-        }
-
-        if (image === null) {
-            setValiImage('Vui lòng chọn ảnh')
-            check = false
-        } else {
-            setValiImage('')
-        }
-        return check
-    }
-    // chuc namg them
-    async function addStoreHandler() {
-        if (kTraAdd()) {
-            const formData = new FormData();
-            // Thêm từng trường dữ liệu
-            formData.append('name', name); // 'name' là tên của trường gửi lên server, `name` là giá trị
-            formData.append('address', addRess);
-            formData.append('location', location);
-            formData.append('phoneNumber', phoneNumber);
-            formData.append('image', {
-                uri: image, // Đường dẫn URI tới file ảnh
-                type: 'image/jpeg', // Đảm bảo định dạng file được chỉ định
-                name: 'photo.jpg', // Đặt tên cho file ảnh
-            });
-
-            console.log(formData);
-
-            const isAdd = await addStore(formData)
-
-
-            if (isAdd) {
-                Alert.alert('Thành công', 'Thêm cửa hàng mới thành công');
-                setModleAdd(false)
-                TrangDL()
-                getData();
-
-            } else {
-                Alert.alert('Lỗi khi thêm cửa hàng mới vui lòng thử lại sau ')
-            }
+            console.error('Không có dữ liệu sản phẩm');
         }
     }
-
-    const kTraUpdate = () => {
-        let check = true
-
-        if (tenUpdataStore === "") {
-            setValidteTen("Vui lòng nhập tên cửa hàng")
-            check = false
-        } else if (tenUpdataStore.length < 2) {
-            setValidteTen("Độ dài phải hơn 2 ký tự")
-            check = false
-        } else {
-            setValidteTen("")
-        }
-
-        if (UpdatadAddRess === "") {
-            setValiAddRess("Vui lòng nhập vị trí cửa hàng")
-            check = false
-        } else if (UpdatadAddRess.length < 10) {
-            setValiAddRess("Độ dài phải hơn 10 ký tự")
-            check = false
-        } else {
-            setValiAddRess("")
-        }
-
-        if (UpdataLocation === "") {
-            setValiLocation("Vui lòng nhập địa chỉ cửa hàng")
-            check = false
-        } else {
-            setValiLocation("")
-
-        }
-
-        if (UpdataNumberPhone === "") {
-            setValiPhoneNumber("Vui lòng nhập số điện thoại")
-            check = false
-        } else if (isNaN(Number(UpdataNumberPhone))) {
-            setValiPhoneNumber("Phải phải số")
-            check = false
-        } else if (UpdataNumberPhone.length < 9) {
-            setValiPhoneNumber("Độ dài phải hơn 9 ký tự")
-            check = false
-        } else {
-            setValiPhoneNumber("")
-        }
-
-        if (UpdatatImg === null) {
-            setValiImage('Vui lòng chọn ảnh')
-            check = false
-        } else {
-            setValiImage('')
-        }
-
-
-        return check
-    }
-    // chuc nang sua
-    async function updateStoreHandler() {
-        if (kTraUpdate()) {
-            const formData = new FormData();
-            formData.append('name', tenUpdataStore);
-            formData.append('address', UpdatadAddRess);
-            formData.append('location', UpdataLocation);
-            formData.append('phoneNumber', UpdataNumberPhone);
-
-            if (UpdatatImg) {
-                formData.append('image', {
-                    uri: UpdatatImg,
-                    type: 'image/jpeg',
-                    name: 'photo.jpg',
-                });
-            }
-
-            try {
-                const isAdd = await UpdateStore(idUpdataStore, formData);
-                if (isAdd) {
-                    Alert.alert('Thành công', 'Sửa thông tin cửa hàng thành công');
-                    setModleUpdate(false);
-                    TrangDL();
-                    getData();
-                } else {
-                    Alert.alert('Lỗi', 'Lỗi khi sửa cửa hàng, vui lòng thử lại sau.');
-                }
-            } catch (error) {
-                console.error(error);
-                Alert.alert('Lỗi', 'Đã xảy ra lỗi, vui lòng thử lại sau.');
-            }
-        }
-    }
-    //Chuc nang search
     //Xóa kí tự, loại bỏ dấu 
     const removeDiacritics = (text: string) => {
         return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -307,59 +110,258 @@ function StoreManager() {
     };
     const TrangDL = () => {
         setName('')
-        setAddRess('')
-        setLocation('')
-        setPhoneNumber('')
+        setPrice('')
+        setSoLuong('')
+        setMoTa('')
         setImage(null)
 
-        setValiAddRess('')
+        setValidteName('')
         setValiImage('')
-        setValiLocation('')
-        setValiPhoneNumber('')
-        setValidteTen('')
+        setValiSoLuong('')
+        setValiGia('')
+        setValiMoTa('')
+    }
+    const kTraAdd = () => {
+        let check = true
+        if (name === "") {
+            setValidteName("Vui lòng nhập tên sản phẩm")
+            check = false
+        } else if (name.length < 2) {
+            setValidteName("Độ dài phải hơn 2 ký tự")
+            check = false
+        } else {
+            setValidteName("")
+
+        }
+        if (moTa === "") {
+            setValiMoTa("Vui lòng nhập mô tả")
+            check = false
+        } else if (name.length < 2) {
+            setValiMoTa("Độ dài phải hơn 2 ký tự")
+            check = false
+        } else {
+            setValiMoTa("")
+
+        }
+
+        if (soLuong === "") {
+            setValiSoLuong("Vui lòng nhập số lượng")
+            check = false
+        } else if (isNaN(Number(soLuong))) {
+            setValiSoLuong("Phải phải số")
+            check = false
+        } else if (soLuong.length < 0) {
+            setValiSoLuong("Số lượng phải lớn hơn 0")
+            check = false
+        } else {
+            setValiSoLuong("")
+        }
+
+        if (price === "") {
+            setValiGia("Vui lòng nhập giá")
+            check = false
+        } else if (isNaN(Number(price))) {
+            setValiGia("Phải phải số")
+            check = false
+        } else if (price.length < 0) {
+            setValiGia("Giá phải lớn hơn 0")
+            check = false
+        } else {
+            setValiGia("")
+        }
+
+        if (image === null) {
+            setValiImage('Vui lòng chọn ảnh')
+            check = false
+        } else {
+            setValiImage('')
+        }
+        return check
+    }
+    // Chuc nang add
+    async function addProductHandler() {
+        if (kTraAdd()) {
+            const formData = new FormData();
+            // Thêm từng trường dữ liệu
+            formData.append('name', name);
+            formData.append('price', price);
+            formData.append('quantity', soLuong);
+            formData.append('description', moTa);
+            formData.append('id_store', id_Store);
+            formData.append('image', {
+                uri: image, // Đường dẫn URI tới file ảnh
+                type: 'image/jpeg', // Đảm bảo định dạng file được chỉ định
+                name: 'photo.jpg', // Đặt tên cho file ảnh
+            });
+            const isAdd = await addProduct(formData)
+
+
+            if (isAdd) {
+                Alert.alert('Thêm sản phẩm mới thành công')
+                setModleAdd(false)
+                TrangDL()
+                getData();
+
+            } else {
+                Alert.alert('Lỗi khi thêm sản phẩm mới vui lòng thử lại sau ')
+            }
+        }
+    }
+    const kTraUpdate = () => {
+        let check = true
+        if (updateName === "") {
+            setValidteName("Vui lòng nhập tên sản phẩm")
+            check = false
+        } else if (updateName.length < 2) {
+            setValidteName("Độ dài phải hơn 2 ký tự")
+            check = false
+        } else {
+            setValidteName("")
+
+        }
+        if (updateMoTa === "") {
+            setValiMoTa("Vui lòng nhập mô tả")
+            check = false
+        } else if (updateMoTa.length < 2) {
+            setValiMoTa("Độ dài phải hơn 2 ký tự")
+            check = false
+        } else {
+            setValiMoTa("")
+
+        }
+
+        if (updateSoLuong === "") {
+            setValiSoLuong("Vui lòng nhập số lượng")
+            check = false
+        } else if (isNaN(Number(updateSoLuong))) {
+            setValiSoLuong("Phải phải số")
+            check = false
+        } else if (updateSoLuong.length < 0) {
+            setValiSoLuong("Số lượng phải lớn hơn 0")
+            check = false
+        } else {
+            setValiSoLuong("")
+        }
+
+        if (updatePrice === "") {
+            setValiGia("Vui lòng nhập giá")
+            check = false
+        } else if (isNaN(Number(updatePrice))) {
+            setValiGia("Phải phải số")
+            check = false
+        } else if (updatePrice.length < 0) {
+            setValiGia("Giá phải lớn hơn 0")
+            check = false
+        } else {
+            setValiGia("")
+        }
+
+        if (updateImage === null) {
+            setValiImage('Vui lòng chọn ảnh')
+            check = false
+        } else {
+            setValiImage('')
+        }
+        return check
+    }
+    async function updateProductHandler() {
+        if (kTraUpdate()) {
+            const formData = new FormData();
+            // Thêm từng trường dữ liệu
+            formData.append('name', updateName);
+            formData.append('price', updatePrice);
+            formData.append('quantity', updateSoLuong);
+            formData.append('description', updateMoTa);
+            formData.append('id_store', id_Store);
+            formData.append('image', {
+                uri: updateImage, // Đường dẫn URI tới file ảnh
+                type: 'image/jpeg', // Đảm bảo định dạng file được chỉ định
+                name: 'photo.jpg', // Đặt tên cho file ảnh
+            });
+            const isAdd = await UpdateProduct(id_Sp, formData)
+
+
+            if (isAdd) {
+                Alert.alert('Sửa sản phẩm thành công')
+                setModleUpdate(false)
+                TrangDL()
+                getData();
+
+            } else {
+                Alert.alert('Lỗi khi sửa sản phẩm vui lòng thử lại sau ')
+            }
+        }
+    }
+
+    //Chuc nang xoa
+    function deleteSeviceHandler(id: any) {
+        Alert.alert(
+            'Xác nhận xóa',
+            'Bạn có chắc muốn xóa sản phẩm này?',
+            [
+                {
+                    text: 'Có',
+                    onPress: async () => {
+                        const isDelete = await deleteProduct(id);
+                        if (isDelete) {
+                            ToastAndroid.show('Xóa sản phẩm thành công', ToastAndroid.SHORT);
+                            getData();
+                        } else {
+                            Alert.alert('Lỗi khi xóa sản phẩm vui lòng thử lại sau ');
+                        }
+                    },
+                },
+                {
+                    text: 'Không',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                },
+            ],
+            { cancelable: false },
+        );
     }
 
     const renderItem = ({ item, index }: any) => (
         <Pressable
-            onPress={() => { setModleChiTiet(true), setSTT(index + 1), setUpdataTenStore(item.name), setUpdataAddRess(item.address), setUpdataLocation(item.location), setUpdataNumberPhone(item.phoneNumber), setUpdataImg(item.image), setUpdataNgayTao(item.createdAt), setUpdataNgayUpdate(item.updatedAt) }}
-            style={styles.item}
+            onLongPress={() => { setModleChiTiet(true), setUpdateName(item.name), setUpdateImage(item.image), setUpdatePrice(item.price), setUpdateSoLuong(item.quantity), setUpdateMoTa(item.description), setUpdataNgayTao(item.createdAt), setUpdataNgayUpdate(item.updatedAt) }} style={styles.item}
         >
             <View style={{ flexDirection: 'row' }}>
+
                 <View style={{ justifyContent: 'center' }}>
                     <Text style={styles.text1}>{index + 1}</Text>
                 </View>
+
                 <View style={{ justifyContent: 'center' }}>
 
-                    <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 5 }}>
-                        <Image style={{ width: 20, height: 20, marginHorizontal: 5 }} source={require('./icon/store.png')} />
-                        <Text style={styles.text}>{item.name}</Text>
-                    </View>
 
                     <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 5 }}>
-                        <Image style={{ width: 20, height: 20, marginHorizontal: 5 }} source={require('./icon/location.png')} />
-                        <Text style={styles.text}>{item.location} </Text>
+                        <Text style={styles.text}>Tên sản phẩm: {item.name} </Text>
                     </View>
-
                     <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 5 }}>
-                        <Image style={{ width: 20, height: 20, marginHorizontal: 5 }} source={require('./icon/telephone.png')} />
-                        <Text style={styles.text}>{item.phoneNumber} </Text>
+                        <Text style={styles.text}>Giá: {item.price} VND</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 5 }}>
+                        <Text style={styles.text}>Số lượng tồn: {item.quantity} </Text>
                     </View>
 
                 </View>
             </View>
+
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                 <TouchableOpacity onPress={() => {
-                    deleteStoreHandler(idService = item._id)
+                    deleteSeviceHandler(item._id)
                 }}>
                     <Image style={{ width: 20, height: 20, }} source={require('./icon/bin.png')} />
                 </TouchableOpacity>
                 <View style={{ height: 30 }}></View>
-                <TouchableOpacity onPress={() => { setModleUpdate(true), setUpdataIdStore(item._id), setUpdataTenStore(item.name), setUpdataAddRess(item.address), setUpdataLocation(item.location), setUpdataNumberPhone(item.phoneNumber), setUpdataImg(item.image), setUpdataNgayTao(item.createdAt), setUpdataNgayUpdate(item.updatedAt) }}>
+                <TouchableOpacity onPress={() => {
+                    setModleUpdate(true), setId_Sp(item._id), setUpdateName(item.name), setUpdateImage(item.image), setUpdatePrice(item.price), setUpdateSoLuong(item.quantity), setUpdateMoTa(item.description)
+                }}>
                     <Image style={{ width: 20, height: 20, }} source={require('./icon/refresh.png')} />
                 </TouchableOpacity>
             </View>
-        </Pressable>
-    )
+        </Pressable >
+    );
 
     return (
         <View style={styles.boby}>
@@ -370,13 +372,12 @@ function StoreManager() {
             }}>
                 <TextInput
                     style={styles.inputSearch}
-                    placeholder="Tìm kiếm tên cửa hàng"
+                    placeholder="Tìm kiếm tên sản phẩm"
                     placeholderTextColor={'#8391A1'}
                     onChangeText={text => handleSearch(text)}
                 />
 
-
-                <View style={styles.searchTen} >
+                <View style={styles.searchTen}>
                     <Image
                         style={{ width: 20, height: 20 }}
                         source={require('./icon/search.png')}
@@ -387,11 +388,10 @@ function StoreManager() {
             <View style={styles.box4}>
                 <View style={{ alignItems: 'center' }}>
                     <Text style={styles.title}>
-                        Danh sách cửa hàng
+                        Danh sách sản phẩm
                     </Text>
                 </View>
                 <FlatList
-                    style={{}}
                     data={filteredData}
                     renderItem={renderItem}
                     ListEmptyComponent={<Text style={styles.title2}>Không có kết quả</Text>}
@@ -415,32 +415,25 @@ function StoreManager() {
                     </TouchableOpacity>
                 </View>
             </View>
-
-
             {/* Modal Chi tiết */}
             <Modal
                 animationType='slide'
-                visible={modalChiTiet}
-                transparent={true}
-            >
+                visible={modalChiTiet
+                }
+                transparent={true}>
                 <View style={styles.box1}>
                     <View style={styles.box2}>
-                        <Text style={styles.title}>Chi tiết cửa hàng</Text>
+                        <Text style={styles.title}>Chi tiết sản phẩm</Text>
                         <View style={{ width: '100%', alignItems: 'center', }}>
                             <Image style={styles.img_CT} source={{ uri: employeeImage }} />
                         </View>
 
                         <View style={{ margin: 20 }}>
-                            <Text style={styles.text1}>STT: {stt}</Text>
-                            <Text style={styles.text1}>Tên cửa hàng: {tenUpdataStore}</Text>
-                            <TouchableOpacity onPress={() => { handleAddress(UpdatadAddRess) }}>
-                                <Text style={styles.text1}>Vị trí: {UpdatadAddRess}</Text>
-                            </TouchableOpacity>
-
-                            <Text style={styles.text1}>Địa chỉ: {UpdataLocation}</Text>
-                            <Text style={styles.text1}>Số điện thoại: {UpdataNumberPhone} </Text>
-                            <Text style={styles.text1}>Ngày tạo: {UpdatangayTao.slice(0, 10)}</Text>
-                            <Text style={styles.text1}>Cập nhật gần nhất: {UpdatangayUpdate.slice(0, 10)}</Text>
+                            <Text style={styles.text1}>Tên sản phẩm: {updateName}</Text>
+                            <Text style={styles.text1}>Giá: {updatePrice}</Text>
+                            <Text style={styles.text1}>Số lượng tồn: {updateSoLuong}</Text>
+                            <Text style={styles.text1}>Mô tả: {updateMoTa} </Text>
+                            <Text style={styles.text1}>Cửa hàng: {updateMoTa} </Text>
                         </View>
 
                         <View style={{ alignItems: 'center' }}>
@@ -462,15 +455,15 @@ function StoreManager() {
                     </View>
                 </View>
             </Modal>
-            {/* Modal sua */}
+            {/* Modal suaw */}
             <Modal animationType="slide" visible={modalUpdate} transparent={true}>
-
                 <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                     style={{ flex: 1, alignItems: 'center' }}
                 >
                     <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
-                        <View style={styles.box3}>
+                        <View
+                            style={styles.box3}>
                             <View
                                 style={{
                                     flexDirection: 'row',
@@ -489,7 +482,7 @@ function StoreManager() {
                                     />
                                 </TouchableOpacity>
                                 <View style={{ justifyContent: 'center' }}>
-                                    <Text style={styles.title2}>Sửa thông tin cửa hàng</Text>
+                                    <Text style={styles.title2}>Sửa thông tin sản phẩm</Text>
                                 </View>
                                 <View style={{ width: 30, height: 30 }}></View>
                             </View>
@@ -498,51 +491,51 @@ function StoreManager() {
                                 <View style={styles.inputAdd}>
                                     <TextInput
                                         style={{ width: 300, color: 'black' }}
-                                        defaultValue={tenUpdataStore}
-                                        placeholder="Nhập tên store"
+                                        defaultValue={updateName}
+                                        placeholder="Nhập tên sản phẩm"
                                         placeholderTextColor={'#8391A1'}
                                         onChangeText={text => {
-                                            setUpdataTenStore(text);
+                                            setUpdateName(text);
                                         }}
                                     />
                                 </View>
-                                <Text style={styles.textVali}>{validteTen}</Text>
+                                <Text style={styles.textVali}>{validteName}</Text>
                                 <View style={styles.inputAdd}>
                                     <TextInput
                                         style={{ width: 300, color: 'black' }}
-                                        defaultValue={UpdatadAddRess}
-                                        placeholder="Nhập vị trí"
+                                        defaultValue={updatePrice.toString()}
+                                        placeholder="Nhập giá"
                                         placeholderTextColor={'#8391A1'}
                                         onChangeText={text => {
-                                            setUpdataAddRess(text);
+                                            setUpdatePrice(text);
                                         }}
                                     />
                                 </View>
-                                <Text style={styles.textVali}>{validteAddress}</Text>
+                                <Text style={styles.textVali}>{validteGia}</Text>
                                 <View style={styles.inputAdd}>
                                     <TextInput
                                         style={{ width: 300, color: 'black' }}
-                                        defaultValue={UpdataLocation}
-                                        placeholder="Nhập địa chỉ"
+                                        defaultValue={updateSoLuong.toString()}
+                                        placeholder="Nhập số lượng"
                                         placeholderTextColor={'#8391A1'}
                                         onChangeText={text => {
-                                            setUpdataLocation(text);
+                                            setUpdateSoLuong(text);
                                         }}
                                     />
                                 </View>
-                                <Text style={styles.textVali}>{validteLocation}</Text>
+                                <Text style={styles.textVali}>{validteSoLuong}</Text>
                                 <View style={styles.inputAdd}>
                                     <TextInput
                                         style={{ width: 300, color: 'black' }}
-                                        defaultValue={UpdataNumberPhone}
+                                        defaultValue={updateMoTa}
                                         placeholder="Nhập số điện thoại"
                                         placeholderTextColor={'#8391A1'}
                                         onChangeText={text => {
-                                            setUpdataNumberPhone(text);
+                                            setUpdateMoTa(text);
                                         }}
                                     />
                                 </View>
-                                <Text style={styles.textVali}>{validtePhoneNumber}</Text>
+                                <Text style={styles.textVali}>{validteMota}</Text>
 
                                 <View style={styles.view1}>
                                     <TouchableOpacity
@@ -554,9 +547,9 @@ function StoreManager() {
                                     </TouchableOpacity>
 
                                     {
-                                        UpdatatImg && (
+                                        updateImage && (
                                             <Image
-                                                source={{ uri: UpdatatImg }}
+                                                source={{ uri: updateImage }}
                                                 style={{ height: 100, width: 100, borderRadius: 5 }}
                                             />
                                         )}
@@ -565,9 +558,7 @@ function StoreManager() {
                                 <Text style={styles.textVali}>{validteImage}</Text>
                                 <TouchableOpacity
                                     onPress={() => {
-                                        updateStoreHandler();
-
-
+                                        updateProductHandler()
                                     }}
                                     style={{
                                         width: 330,
@@ -584,18 +575,16 @@ function StoreManager() {
                         </View>
                     </ScrollView>
                 </KeyboardAvoidingView>
-
             </Modal>
-
             {/* Modal Thêm mới */}
             <Modal animationType="slide" visible={modalAdd} transparent={true}>
-
                 <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                     style={{ flex: 1, alignItems: 'center' }}
                 >
                     <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
-                        <View style={styles.box3}>
+                        <View
+                            style={styles.box3}>
                             <View
                                 style={{
                                     flexDirection: 'row',
@@ -604,8 +593,8 @@ function StoreManager() {
                                 }}>
                                 <TouchableOpacity
                                     onPress={() => {
-                                        TrangDL(),
-                                            setModleAdd(false);
+                                        TrangDL()
+                                        setModleAdd(false)
                                     }}
                                     style={styles.btn_back}>
                                     <Image
@@ -614,7 +603,7 @@ function StoreManager() {
                                     />
                                 </TouchableOpacity>
                                 <View style={{ justifyContent: 'center' }}>
-                                    <Text style={styles.title2}>Thêm cửa hàng mới</Text>
+                                    <Text style={styles.title2}>Thêm sản phẩm mới</Text>
                                 </View>
                                 <View style={{ width: 30, height: 30 }}></View>
                             </View>
@@ -624,51 +613,51 @@ function StoreManager() {
                                     <TextInput
                                         style={{ width: 300, color: 'black' }}
                                         value={name}
-                                        placeholder="Nhập tên store"
+                                        placeholder="Nhập tên sản phẩm"
                                         placeholderTextColor={'#8391A1'}
                                         onChangeText={text => {
                                             setName(text);
                                         }}
                                     />
                                 </View>
-                                <Text style={styles.textVali}>{validteTen}</Text>
-                                <View style={styles.inputAdd}>
-                                    <TextInput
-                                        style={{ width: 300, color: 'black' }}
-                                        value={addRess}
-                                        placeholder="Nhập vị trí"
-                                        placeholderTextColor={'#8391A1'}
-                                        onChangeText={text => {
-                                            setAddRess(text);
-                                        }}
-                                    />
-                                </View>
-                                <Text style={styles.textVali}>{validteAddress}</Text>
-                                <View style={styles.inputAdd}>
-                                    <TextInput
-                                        style={{ width: 300, color: 'black' }}
-                                        value={location}
-                                        placeholder="Nhập địa chỉ"
-                                        placeholderTextColor={'#8391A1'}
-                                        onChangeText={text => {
-                                            setLocation(text);
-                                        }}
-                                    />
-                                </View>
-                                <Text style={styles.textVali}>{validteLocation}</Text>
-                                <View style={styles.inputAdd}>
-                                    <TextInput
-                                        style={{ width: 300, color: 'black' }}
-                                        value={phoneNumber}
-                                        placeholder="Nhập số điện thoại"
-                                        placeholderTextColor={'#8391A1'}
-                                        onChangeText={text => {
-                                            setPhoneNumber(text);
-                                        }}
-                                    />
-                                </View>
-                                <Text style={styles.textVali}>{validtePhoneNumber}</Text>
+                                <Text style={styles.textVali}>{validteName}</Text>
 
+                                <View style={styles.inputAdd}>
+                                    <TextInput
+                                        style={{ width: 300, color: 'black' }}
+                                        value={price}
+                                        placeholder="Nhập giá"
+                                        placeholderTextColor={'#8391A1'}
+                                        onChangeText={text => {
+                                            setPrice(text);
+                                        }}
+                                    />
+                                </View>
+                                <Text style={styles.textVali}>{validteGia}</Text>
+                                <View style={styles.inputAdd}>
+                                    <TextInput
+                                        style={{ width: 300, color: 'black' }}
+                                        value={soLuong}
+                                        placeholder="Nhập số lượng"
+                                        placeholderTextColor={'#8391A1'}
+                                        onChangeText={text => {
+                                            setSoLuong(text);
+                                        }}
+                                    />
+                                </View>
+                                <Text style={styles.textVali}>{validteSoLuong}</Text>
+                                <View style={styles.inputAdd}>
+                                    <TextInput
+                                        style={{ width: 300, color: 'black' }}
+                                        value={moTa}
+                                        placeholder="Nhập mô tả"
+                                        placeholderTextColor={'#8391A1'}
+                                        onChangeText={text => {
+                                            setMoTa(text);
+                                        }}
+                                    />
+                                </View>
+                                <Text style={styles.textVali}>{validteMota}</Text>
                                 <View style={styles.view1}>
                                     <TouchableOpacity
                                         style={styles.view2}
@@ -689,7 +678,7 @@ function StoreManager() {
                                 <Text style={styles.textVali}>{validteImage}</Text>
                                 <TouchableOpacity
                                     onPress={() => {
-                                        addStoreHandler();
+                                        addProductHandler()
                                     }}
                                     style={{
                                         width: 330,
@@ -706,10 +695,13 @@ function StoreManager() {
                         </View>
                     </ScrollView>
                 </KeyboardAvoidingView>
-
             </Modal>
         </View>
     );
 }
 
-export default StoreManager;
+export default ProducManagement;
+
+function getData() {
+    throw new Error('Function not implemented.');
+}
