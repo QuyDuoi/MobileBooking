@@ -1,17 +1,17 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 
-const ItemCategory = ({item, onDelete, onUpdateHandler, onclick}) => {
+const ItemCategory = ({ item, onDelete, onUpdateHandler, onclick }) => {
   return (
     <TouchableOpacity
-      style={{width: '100%', alignItems: 'center'}}
+      style={{ width: '100%', alignItems: 'center' }}
       onPress={() => onclick(item.item)}>
       <View style={styles.ItemContainer}>
         <View style={styles.ItemBody}>
           <Text style={styles.stt}>{item.index + 1}</Text>
           <View style={styles.content}>
             <Text style={styles.textName}>{item.item?.nameCategory}</Text>
-            <Text style={{color: 'black'}}>
+            <Text style={{ color: 'black' }}>
               {item.item?.createdAt.slice(0, 10)}
             </Text>
           </View>

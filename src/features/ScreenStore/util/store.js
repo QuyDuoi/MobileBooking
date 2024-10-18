@@ -1,4 +1,4 @@
-import {api} from './api';
+import { api } from './api';
 
 export const getListStore = async () => {
   try {
@@ -15,7 +15,6 @@ export const getListStore = async () => {
 
 export const addStore = async formData => {
   try {
-    console.log('Bắt đầu thêm mới Store ');
     const response = await fetch(api.StoreAdd, {
       method: 'POST',
       headers: {
@@ -36,7 +35,6 @@ export const addStore = async formData => {
 
 export const UpdateStore = async (id, formData) => {
   try {
-    console.log('Bắt đầu cập nhật Store');
     const response = await fetch(`${api.StoreUpdate}/${id}`, {
       method: 'PUT',
       headers: {
@@ -51,22 +49,20 @@ export const UpdateStore = async (id, formData) => {
   } catch (error) {
     console.log('lỗi khi cập nhật Store');
     return false;
-    console.log(error);
   }
 };
 
 export const deleteStore = async id => {
   try {
-    console.log('Bắt đầu xóa Store');
     const response = await fetch(`${api.StoreDelete}/${id}`, {
       method: 'DELETE',
     });
     console.log('Xóa Store thành công');
-    if (response.ok){
-        return true;
+    if (response.ok) {
+      return true;
     } else {
-        console.log("Lỗi xóa cửa hàng!");
-        
+      console.log("Lỗi xóa cửa hàng!");
+
     }
   } catch (error) {
     console.log('lỗi khi xóa Store');

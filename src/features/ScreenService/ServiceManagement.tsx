@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Modal,
   Platform,
+  Pressable,
   StyleSheet,
   Text,
   TextInput,
@@ -288,19 +289,22 @@ const ServiceManagement = () => {
 
   }
   //Chuc nang search
+  //Xóa kí tự, loại bỏ dấu 
+  const removeDiacritics = (text: string) => {
+    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  };
   const handleSearch = (text: string) => {
     setSearchName(text);
 
     if (text) {
       // Lọc dữ liệu theo tên
       const filtered = Data.filter(item =>
-        item.nameService.toLowerCase().includes(text.toLowerCase())
+        removeDiacritics(item.name).toLowerCase().includes(removeDiacritics(text).toLowerCase())
       );
       setFilteredData(filtered);
     } else {
       // Nếu input rỗng, hiển thị lại toàn bộ dữ liệu
       setFilteredData(Data);
-      console.log(searchName);
     }
   };
 
@@ -309,8 +313,8 @@ const ServiceManagement = () => {
 
   // item flatlis
   const renderItem = ({ item, index }: any) => (
-    <TouchableOpacity
-      onPress={() => { setModleChiTiet(true), setSTT(index + 1), setUpdataIdDV(item._id), setUpdataTenDV(item.nameService), setUpdataDanhMuc(item.id_category), setUpdataMoTa(item.descreption), setUpdataGia(item.price), setUpdataThoiLuong(item.duration), setUpdataNgayTao(item.createdAt), setUpdataNgayUpdate(item.updatedAt) }}
+    <Pressable
+      onPress={() => { setModleChiTiet(true), setUpdataIdDV(item._id), setUpdataTenDV(item.nameService), setUpdataDanhMuc(item.id_category), setUpdataMoTa(item.descreption), setUpdataGia(item.price), setUpdataThoiLuong(item.duration), setUpdataNgayTao(item.createdAt), setUpdataNgayUpdate(item.updatedAt) }}
       style={styles.item}
     >
       <View style={{ flexDirection: 'row' }}>
@@ -341,11 +345,13 @@ const ServiceManagement = () => {
           <Image style={{ width: 20, height: 20, }} source={require('./icon/bin.png')} />
         </TouchableOpacity>
         <View style={{ height: 30 }}></View>
-        <TouchableOpacity onPress={() => { setModleUpdate(true), setSTT(index + 1), setUpdataIdDV(item._id), setUpdataTenDV(item.nameService), setValue(item.id_category), setUpdataMoTa(item.descreption), setUpdataGia(item.price), setUpdataThoiLuong(item.duration) }}>
+        <TouchableOpacity onPress={() => {
+          setModleUpdate(true), setUpdataIdDV(item._id), setUpdataTenDV(item.nameService), setUpdataDanhMuc(item.id_category), setUpdataMoTa(item.descreption), setUpdataGia(item.price), setUpdataThoiLuong(item.duration), setUpdataNgayTao(item.createdAt), setUpdataNgayUpdate(item.updatedAt)
+        }}>
           <Image style={{ width: 20, height: 20, }} source={require('./icon/refresh.png')} />
         </TouchableOpacity>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   )
 
   return (
@@ -412,7 +418,6 @@ const ServiceManagement = () => {
           <View style={styles.box2}>
             <Text style={styles.title}>Chi tiết dịch vụ</Text>
             <View style={{ margin: 20 }}>
-              <Text style={styles.text}>STT: {stt}</Text>
               <Text style={styles.text}>Tên dịch vụ: {tenUpdataDV}</Text>
               <Text style={styles.text}>Danh mục: {UpdatadanhMuc}</Text>
               <Text style={styles.text}>Mô tả: {UpdatamoTa}</Text>
@@ -501,6 +506,7 @@ const ServiceManagement = () => {
                     items={items}
                     setOpen={setOpen}
                     setValue={setValue}
+                    searchable={true}
                     setItems={setItems}
                     placeholder="Vui lòng chọn danh mục"
                     onChangeValue={(text: any) => {
@@ -630,6 +636,7 @@ const ServiceManagement = () => {
                     open={open}
                     value={value}
                     items={items}
+                    searchable={true}
                     setOpen={setOpen}
                     setValue={setValue}
                     setItems={setItems}

@@ -1,4 +1,4 @@
-const ipAddress = 'http://192.168.1.11:3000/api/';
+const ipAddress = 'http://192.168.2.10:3000/api/';
 
 export const getListStore = async () => {
     try {
@@ -13,7 +13,7 @@ export const getListStore = async () => {
 }
 
 export const getListEmplayee = async () => {
-   
+
     try {
         const response = await fetch(`${ipAddress}getListEmployee`)
         const data = await response.json();
@@ -26,7 +26,7 @@ export const getListEmplayee = async () => {
 }
 
 export const getListService = async () => {
-   
+
     try {
         const response = await fetch(`${ipAddress}getListService`)
         const data = await response.json();
