@@ -6,6 +6,8 @@ import Category from '../features/ScreenCategory/Category';
 import ServiceManagement from '../features/ScreenService/ServiceManagement';
 import BookingManagement from '../features/ScreenBooking/BookingManagement';
 import StoreManager from '../features/ScreenStore/StoreManager';
+import ThongKe from '../features/ScreenTK/ThongKe';
+import TabThongKe from '../features/ScreenTK/TabThongKe';
 
 const Drawer = createDrawerNavigator();
 
@@ -33,6 +35,11 @@ function DrawerNavigator(): React.JSX.Element {
           name="Booking"
           component={BookingManagement}
           options={{title: 'Lịch đặt'}}
+        />
+        <Drawer.Screen
+          name="ThongKe"
+          component={ThongKe}
+          options={{title: 'Thống kê'}}
         />
       </Drawer.Navigator>
     </NavigationContainer>
