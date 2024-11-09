@@ -18,74 +18,73 @@ const heightScreen = Dimensions.get('window').height;
 
 const ThongKe = () => {
   const [tabbar, settabbar] = useState(1);
-  const [ngay, setngay] = useState('')
-  const [thang, setthang] = useState('')
-  const [nam, setnam] = useState('')
-  const [selectDate, setselectDate] = useState(false)
+  const [ngay, setngay] = useState('');
+  const [thang, setthang] = useState('');
+  const [nam, setnam] = useState('');
+  const [selectDate, setselectDate] = useState(false);
   const [data, setdata] = useState({
     labels: ['Today'],
     datasets: [{data: [20]}],
   });
-useEffect(() => {
-  function getdate(){
-    const dateday= new Date()
-    setngay( dateday.getUTCDate());
-    setthang(dateday.getUTCMonth() + 1);
-    setnam(dateday.getUTCFullYear());
-  }
-  
-  getdate()
-  
-}, [])
-
 
   useEffect(() => {
+    function getdate(){
+      const dateday = new Date();
+      setngay(dateday.getUTCDate().toString());  // Convert to string
+      setthang((dateday.getUTCMonth() + 1).toString());  // Convert to string
+      setnam(dateday.getUTCFullYear().toString());  // Convert to string
+    }
 
-    const getDataMonth=async()=>{
-      const datamonth = await getTKMonths()
-      if(!datamonth){
+    getdate();
+  }, []);
+
+  useEffect(() => {
+    const getDataMonth = async () => {
+      const datamonth = await getTKMonths();
+      if (!datamonth) {
         setdata({
           labels: [''],
-        datasets: [{data: [0]}],
-        })
-      }else{
+          datasets: [{data: [0]}],
+        });
+      } else {
         setdata({
           labels: datamonth.map(item => item.month),
           datasets: [{data: datamonth.map(item => item.totalRevenue)}]
-        })
+        });
       }
-    }
-    
-    const getDataDay= async()=>{
-       const dataday= await  getTKDate(nam,thang,ngay)
-       setdata(dataday)
-    }
-    const getWeek = async ()=>{
+    };
+
+    const getDataDay = async () => {
+      const dataday = await getTKDate(nam, thang, ngay);
+      setdata(dataday);
+    };
+
+    const getWeek = async () => {
       const dataWeek = await getTKWeek();
       dataWeek ? setdata({
         labels: dataWeek.map(item => item.week),
         datasets: [{data: dataWeek.map(item => item.totalRevenue)}]
       }) : setdata({
         labels: [''],
-      datasets: [{data: [0]}],
-      })
-    }
+        datasets: [{data: [0]}],
+      });
+    };
 
     if (tabbar === 1) {
-      getDataDay()
+      getDataDay();
     } else if (tabbar === 2) {
-      getWeek()
+      getWeek();
     } else {
-       getDataMonth()
+      getDataMonth();
     }
-  }, [tabbar,ngay]);
+  }, [tabbar, ngay, thang, nam]);
 
-  
   const dichVuData = [
     {tenDichVu: 'Dịch vụ 1', soLuongKhach: 100, tongDoanhThu: 1000000},
     {tenDichVu: 'Dịch vụ 2', soLuongKhach: 50, tongDoanhThu: 500000},
     {tenDichVu: 'Dịch vụ 3', soLuongKhach: 200, tongDoanhThu: 2000000},
   ];
+
   const storeData = [
     {store: 'store 1', tongDoanhThu: 1000000},
     {store: 'store 2', tongDoanhThu: 500000},
@@ -114,8 +113,8 @@ useEffect(() => {
       </Text>
     </View>
   );
- 
-  const  StoreItem = ({item}) => (
+
+  const StoreItem = ({item}) => (
     <View
       style={{
         flexDirection: 'row',
@@ -174,61 +173,67 @@ useEffect(() => {
         </TouchableOpacity>
       </View>
 
-      {tabbar ===1 &&<View style={{marginTop:12,marginStart:24,flexDirection:'row',alignItems:'center'}}>
-        <TouchableOpacity onPress={()=>setselectDate(true)}>
-          <Image source={require('./img/image.png')} style={{width:30,height:30}}/>
-        </TouchableOpacity>
-        <Text style={{marginStart:8,color:'black',fontSize:16}}>{`${ngay}-${thang}-${nam}`}</Text>
-        </View> }
-        
+      {tabbar === 1 && (
+        <View style={{marginTop: 12, marginStart: 24, flexDirection: 'row', alignItems: 'center'}}>
+          <TouchableOpacity onPress={() => setselectDate(true)}>
+            <Image source={require('./img/image.png')} style={{width: 30, height: 30}} />
+          </TouchableOpacity>
+          <Text style={{marginStart: 8, color: 'black', fontSize: 16}}>
+            {`${ngay}-${thang}-${nam}`}
+          </Text>
+        </View>
+      )}
+
       <View>
         <BieuDo getData={data} />
       </View>
-      <View style={{margin:12,backgroundColor:'white',borderRadius:4}}>
-      <Text
-            style={{
-              margin: 12,
-              color: 'black',
-              fontSize: 16,
-              fontWeight: 'bold',
-            }}>
-            Dịch vụ{' '}
-          </Text>
-      <FlatList
-            data={dichVuData}
-            renderItem={item => <DichVuItem item={item.item} />}
-          />
-          <Text
-            style={{
-              margin: 12,
-              color: 'black',
-              fontSize: 16,
-              fontWeight: 'bold',
-            }}>
-            Cửa hàng{' '}
-          </Text>
-          <FlatList
-            data={storeData}
-            renderItem={item => <StoreItem item={item.item} />}
-          />
+
+      <View style={{margin: 12, backgroundColor: 'white', borderRadius: 4}}>
+        <Text
+          style={{
+            margin: 12,
+            color: 'black',
+            fontSize: 16,
+            fontWeight: 'bold',
+          }}>
+          Dịch vụ{' '}
+        </Text>
+        <FlatList
+          data={dichVuData}
+          renderItem={item => <DichVuItem item={item.item} />}
+        />
+        <Text
+          style={{
+            margin: 12,
+            color: 'black',
+            fontSize: 16,
+            fontWeight: 'bold',
+          }}>
+          Cửa hàng{' '}
+        </Text>
+        <FlatList
+          data={storeData}
+          renderItem={item => <StoreItem item={item.item} />}
+        />
       </View>
 
-     
       <Modal 
-             animationType='slide'
-             transparent={true}
-             visible={selectDate}
+        animationType="slide"
+        transparent={true}
+        visible={selectDate}
       >
-        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-        <View style={{backgroundColor: 'white',shadowColor:'gray',shadowOffset:{width:1,height:2},elevation: 4}}>
-          <Text style={{ textAlign: 'center',color:'blue',fontSize:24,margin:12,fontWeight:'bold' }}>Chọn ngày </Text>
-          <CalendarPicker onDateChange={(date)=>{
-            setngay( date.getUTCDate());
-            setthang(date.getUTCMonth() + 1);
-            setnam(date.getUTCFullYear());
-            setselectDate(false)
-          }} />
-        </View>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <View style={{backgroundColor: 'white', shadowColor: 'gray', shadowOffset: {width: 1, height: 2}, elevation: 4}}>
+            <Text style={{textAlign: 'center', color: 'blue', fontSize: 24, margin: 12, fontWeight: 'bold'}}>
+              Chọn ngày
+            </Text>
+            <CalendarPicker onDateChange={(date) => {
+              setngay(date.getUTCDate().toString()); // Convert to string
+              setthang((date.getUTCMonth() + 1).toString()); // Convert to string
+              setnam(date.getUTCFullYear().toString()); // Convert to string
+              setselectDate(false);
+            }} />
+          </View>
         </View>
       </Modal>
     </ImageBackground>

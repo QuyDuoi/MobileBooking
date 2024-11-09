@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Modal,
   View,
@@ -6,12 +6,14 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Radio from '../features/EmployeeManagement/RadioNhanVien';
 import DropdownStore from './DropdownStore';
 import Employee from '../services/models/EmployeeModel';
-import { styles } from '../styles/styleRadioEmployee';
+import {styles} from '../styles/styleRadioEmployee';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 interface CustomModalAddEmployeeProps {
   visible: boolean;
@@ -25,7 +27,10 @@ const CustomModalAddEmployee: React.FC<CustomModalAddEmployeeProps> = ({
   onSubmit,
 }) => {
   const [employee, setEmployee] = useState<Employee>(new Employee('', '', ''));
-  const [errors, setErrors] = useState<Partial<Record<keyof Employee, string>>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof Employee, string>>>(
+    {},
+  );
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleInputChange = (field: keyof Employee, value: string) => {
     setEmployee(prevState => ({
@@ -48,11 +53,18 @@ const CustomModalAddEmployee: React.FC<CustomModalAddEmployeeProps> = ({
     }));
   };
 
+  const handleCloseModal = () => {
+    setEmployee(new Employee('', '', '', '', '', '', '')); // Reset employee
+    onClose(); // Gọi hàm onClose đã truyền vào props
+  };
+
   const validateForm = () => {
     const newErrors: Partial<Record<keyof Employee, string>> = {};
 
-    if (!employee.fullName) newErrors.fullName = 'Tên nhân viên không được bỏ trống';
-    if (!employee.phoneNumber) newErrors.phoneNumber = 'Số điện thoại không được bỏ trống';
+    if (!employee.fullName)
+      newErrors.fullName = 'Tên nhân viên không được bỏ trống';
+    if (!employee.phoneNumber)
+      newErrors.phoneNumber = 'Số điện thoại không được bỏ trống';
     if (!employee.email) newErrors.email = 'Email không được bỏ trống';
     if (!employee.id_store) newErrors.id_store = 'Cửa hàng không được bỏ trống';
     if (!employee.password) newErrors.password = 'Mật khẩu không được bỏ trống';
@@ -63,9 +75,61 @@ const CustomModalAddEmployee: React.FC<CustomModalAddEmployeeProps> = ({
 
   const handleAddEmployee = () => {
     if (validateForm()) {
+      console.log(employee);
+      if (!employee.userRole) {
+        setEmployee(prevState => ({
+          ...prevState,
+          userRole: 'admin', // Gán giá trị mặc định nếu userRole trống
+        }));
+      }
       onSubmit(employee);
+      setEmployee(new Employee('', '', '', '', '', '', ''));
       onClose(); // Close modal after submitting
     }
+  };
+
+  const openCamera = async () => {
+    await launchCamera(
+      {
+        mediaType: 'photo',
+        saveToPhotos: true,
+      },
+      response => {
+        if (response.assets && response.assets.length > 0) {
+          const uri = response.assets[0].uri;
+          console.log('Ảnh được chụp: ', uri);
+          setEmployee(prevState => ({
+            ...prevState,
+            image: uri || undefined,
+          }));
+        } else {
+          setEmployee(prevState => ({
+            ...prevState,
+            image: undefined,
+          }));
+        }
+        setModalVisible(false);
+      },
+    );
+  };
+
+  const openImageLibrary = () => {
+    launchImageLibrary({mediaType: 'photo'}, response => {
+      if (response.assets && response.assets.length > 0) {
+        const uri = response.assets[0].uri;
+        console.log('Ảnh được chọn: ', uri);
+        setEmployee(prevState => ({
+          ...prevState,
+          image: uri || undefined,
+        }));
+      } else {
+        setEmployee(prevState => ({
+          ...prevState,
+          image: undefined,
+        }));
+      }
+      setModalVisible(false);
+    });
   };
 
   return (
@@ -77,10 +141,28 @@ const CustomModalAddEmployee: React.FC<CustomModalAddEmployeeProps> = ({
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <ScrollView>
-            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={handleCloseModal}>
               <Icon name="close" size={20} color={'black'} />
             </TouchableOpacity>
             <Text style={styles.modalTitle}>Thêm nhân viên mới</Text>
+
+            {/* Image Selection */}
+            <View style={styles.boxImage}>
+              <View style={styles.imageContainer}>
+                {employee.image ? (
+                  <Image source={{uri: employee.image}} style={styles.image} />
+                ) : (
+                  <Text style={styles.placeholderText}>No image selected</Text>
+                )}
+                <TouchableOpacity
+                  style={styles.iconButton}
+                  onPress={() => setModalVisible(true)}>
+                  <Icon name="camera" size={15} color="white" />
+                </TouchableOpacity>
+              </View>
+            </View>
 
             <TextInput
               style={styles.input}
@@ -92,7 +174,10 @@ const CustomModalAddEmployee: React.FC<CustomModalAddEmployeeProps> = ({
               <Text style={styles.errorText}>{errors.fullName}</Text>
             )}
 
-            <DropdownStore onSelectStore={handleStoreSelect} selectValue={employee.id_store} />
+            <DropdownStore
+              onSelectStore={handleStoreSelect}
+              selectValue={employee.id_store}
+            />
             {errors.id_store && (
               <Text style={styles.errorText}>{errors.id_store}</Text>
             )}
@@ -139,7 +224,10 @@ const CustomModalAddEmployee: React.FC<CustomModalAddEmployeeProps> = ({
             )}
 
             <Text style={styles.label}>Phân quyền người dùng</Text>
-            <Radio choiseRole={handleRoleSelect} userRole={employee.id_store || ''} />
+            <Radio
+              choiseRole={handleRoleSelect}
+              userRole={employee.userRole || ''}
+            />
 
             <TouchableOpacity
               style={styles.submitButton}
@@ -149,6 +237,29 @@ const CustomModalAddEmployee: React.FC<CustomModalAddEmployeeProps> = ({
           </ScrollView>
         </View>
       </View>
+
+      {/* Modal for Image Options */}
+      <Modal
+        transparent={true}
+        visible={modalVisible}
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}>
+        <TouchableOpacity
+          style={styles.modalContainerChoice}
+          activeOpacity={1}
+          onPressOut={() => setModalVisible(false)}>
+          <View style={styles.modalContentChoice}>
+            <TouchableOpacity style={styles.modalButton} onPress={openCamera}>
+              <Text style={styles.modalButtonText}>Chụp ảnh</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={openImageLibrary}>
+              <Text style={styles.modalButtonText}>Chọn ảnh từ thư viện</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </Modal>
   );
 };

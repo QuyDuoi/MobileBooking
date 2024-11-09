@@ -1,7 +1,8 @@
-const Ipv4 = '192.168.2.2'
+import {ipAddress} from '../../../services/api';
+
 export const api = {
-        seviceGetList: `http://${Ipv4}:3000/api/getListService`,
-        seviceAdd: `http://${Ipv4}:3000/api/addService`,
-        seviceDelete: `http://${Ipv4}:3000/api/deleteService`,
-        seviceUpdate: `http://${Ipv4}:3000/api/updateService`,
-}
+  seviceGetList: `${ipAddress}getListService`,
+  seviceAdd: `${ipAddress}addService`,
+  seviceDelete: `${ipAddress}deleteService`,
+  seviceUpdate: `${ipAddress}updateService`,
+};

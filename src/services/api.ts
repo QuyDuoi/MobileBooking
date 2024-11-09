@@ -1,16 +1,14 @@
 import { Employee } from "../store/employeeSlice";
 
-const ipAddress = 'http://192.168.1.8:3000/api/';
+export const IPV4 = '192.168.1.7';
 
-export const addEmployee = async (employee: Employee) => {
+export const ipAddress = `http://${IPV4}:3000/api/`;
+
+export const addEmployee = async (formData: FormData) => {
   try {
     const response = await fetch(`${ipAddress}addEmployee`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify(employee),
+      body: formData,
     });
 
     // Kiểm tra phản hồi từ server
@@ -27,18 +25,13 @@ export const addEmployee = async (employee: Employee) => {
   }
 };
 
-export const updateEmployee = async (id: string, employee: Employee) => {
+export const updateEmployee = async (id: string, formData: FormData) => {
   try {
     const response = await fetch(`${ipAddress}updateEmployee/${id}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify(employee),
+      body: formData, // Sử dụng FormData để gửi dữ liệu
     });
 
-    // Kiểm tra phản hồi từ server
     if (!response.ok) {
       throw new Error('Cập nhật không thành công');
     }
@@ -47,8 +40,8 @@ export const updateEmployee = async (id: string, employee: Employee) => {
     console.log('Cập nhật nhân viên thành công');
     return data;
   } catch (error) {
-    console.log('Lỗi cập nhật: ', error); // Log lỗi
-    return false; // Vẫn trả về false nếu có lỗi
+    console.log('Lỗi cập nhật: ', error);
+    return false;
   }
 };
 

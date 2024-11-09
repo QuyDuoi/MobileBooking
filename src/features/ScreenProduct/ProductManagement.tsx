@@ -5,9 +5,6 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { addProduct, deleteProduct, getListProduct, UpdateProduct } from './util/product';
 import { launchImageLibrary } from 'react-native-image-picker';
 
-
-
-
 //Hình ảnh, tên sản phẩm, số lượng hiện có, mô tả, giá. (Quản lý sản phẩm)
 function ProducManagement() {
 
@@ -35,7 +32,6 @@ function ProducManagement() {
     const [updateMoTa, setUpdateMoTa] = useState("")
     const [updatangayTao, setUpdataNgayTao] = useState("")
     const [updatangayUpdate, setUpdataNgayUpdate] = useState("")
-
 
     const [validteName, setValidteName] = useState("")
     const [validteGia, setValiGia] = useState("")
@@ -72,7 +68,6 @@ function ProducManagement() {
             }
         });
     };
-
 
     useEffect(() => {
         getData();

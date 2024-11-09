@@ -1,4 +1,4 @@
-const ipAddress = 'http://192.168.2.10:3000/api/';
+import { ipAddress } from '../../../services/api'
 
 export const getListStore = async () => {
     try {

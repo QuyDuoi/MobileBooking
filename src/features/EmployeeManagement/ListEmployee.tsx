@@ -80,7 +80,7 @@ function ListEmployee({
       <FlatList
         data={filteredEmployees}
         renderItem={renderNhanVienItem}
-        keyExtractor={item => item.email}
+        keyExtractor={item => item._id}
         extraData={filteredEmployees}
       />
     </SafeAreaView>

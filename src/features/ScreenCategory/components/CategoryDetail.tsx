@@ -13,7 +13,7 @@ const CategoryDetail = ({onCloes, data}) => {
     <View style={styles.modalContainer}>
       <View style={styles.modalContent}>
         <Text style={styles.modalTile}>Chi tiết danh mục</Text>
-        <Text style={styles.labelInput}>Name : {data.nameCategory}</Text>
+        <Text style={styles.labelInput}>Tên danh mục: {data.nameCategory}</Text>
         <Text style={{marginStart: 24, marginTop: 12, fontSize: 16}}>
           Ngày tạo : {data.createdAt.slice(0, 10)}
         </Text>
