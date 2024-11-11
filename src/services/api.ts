@@ -1,6 +1,6 @@
 import { Employee } from "../store/employeeSlice";
 
-export const IPV4 = '192.168.1.7';
+export const IPV4 = '192.168.2.7';
 
 export const ipAddress = `http://${IPV4}:3000/api/`;
 
@@ -75,7 +75,7 @@ export const getListStore = async () => {
   }
 };
 
-export const login = async (email: string, password: string): Promise<{status: number, token: string, refreshToken: string, data: Employee}> => {
+export const login = async (email: string, password: string): Promise<{ status: number, token: string, refreshToken: string, data: Employee }> => {
   try {
     const response = await fetch(`${ipAddress}login`, {
       method: 'POST',

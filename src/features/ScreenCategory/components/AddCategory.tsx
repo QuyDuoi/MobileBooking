@@ -1,15 +1,15 @@
 import { Image, ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 
-const AddCategory = ({onCanler,onAdd}) => {
+const AddCategory = ({ onCanler, onAdd }) => {
   const [nameCategory, setnameCategory] = useState('')
   const [validate, setvalidate] = useState(false)
-  function addCategory(){
+  function addCategory() {
     const newCategory = {
-        nameCategory: nameCategory,
-        id_store:'66e2462d7265add6ee481b7b'
+      nameCategory: nameCategory,
+      id_store: '66e2462d7265add6ee481b7b'
     }
-    if(nameCategory.trim() === ''){
+    if (nameCategory.trim() === '') {
       setvalidate(true)
       return false
     }
@@ -17,16 +17,16 @@ const AddCategory = ({onCanler,onAdd}) => {
   }
   return (
     <View style={styles.container}>
-  
+
       <View
         style={{
           height: 280,
           backgroundColor: 'white',
           marginHorizontal: 30,
           borderRadius: 12,
-          paddingHorizontal:32,
+          paddingHorizontal: 32,
 
-}}>
+        }}>
         <Text
           style={{
             fontSize: 20,
@@ -50,7 +50,7 @@ const AddCategory = ({onCanler,onAdd}) => {
         </Text>
         <TextInput
           value={nameCategory}
-          onChangeText={text=>{setnameCategory(text)}}
+          onChangeText={text => { setnameCategory(text) }}
           placeholder='Nhập tên danh mục'
           style={{
             borderWidth: 1,
@@ -60,16 +60,16 @@ const AddCategory = ({onCanler,onAdd}) => {
             paddingStart: 16,
           }}
         />
-        <Text style={{color:'red',fontSize:12,marginStart:24,marginTop:4}}>{validate?'Vui lòng nhập tên danh mục':''}</Text>
-        <View style={{ flexDirection:'row',justifyContent:'space-around',marginTop:32}}>
+        <Text style={{ color: 'red', fontSize: 12, marginStart: 24, marginTop: 4 }}>{validate ? 'Vui lòng nhập tên danh mục' : ''}</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 32 }}>
           <TouchableOpacity
-            onPress={() =>onCanler()}>
+            onPress={() => onCanler()}>
             <Image
               style={{
                 height: 62,
                 width: 125,
               }}
-              source={{uri:'https://i.imgur.com/K147jQY.png'}}
+              source={{ uri: 'https://i.imgur.com/K147jQY.png' }}
             />
           </TouchableOpacity>
 
@@ -80,26 +80,26 @@ const AddCategory = ({onCanler,onAdd}) => {
                 height: 62,
                 width: 125,
               }}
-              source={{uri:'https://i.imgur.com/JIrCx2a.png'}}
+              source={{ uri: 'https://i.imgur.com/JIrCx2a.png' }}
             />
           </TouchableOpacity>
         </View>
       </View>
-  </View>
+    </View>
   )
 }
 
 export default AddCategory
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems:'center'
-      },
-      imgHeader: {
-        width: '100%',
-        height: '100%',
-        resizeMode: 'cover',
-      },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  imgHeader: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
 })

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 import {
   Alert,
   FlatList,
@@ -27,6 +27,9 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import currency from 'currency.js';
 import { styles } from './styles/styleService';
+import { fetchCategories } from '../../store/categorySlice';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../store/store';
 
 let idService = '';
 const ServiceManagement = () => {
@@ -64,7 +67,8 @@ const ServiceManagement = () => {
   const [validteMoTa, setValiMoTa] = useState("")
   const [validteGia, setValiGia] = useState("")
   const [validteThoiLuong, setValiThoiLuong] = useState("")
-
+  const dispatch = useDispatch<AppDispatch>();
+  const id_store = '66f4eced30557ca7844dd7c3';
   useEffect(() => {
     getData();
   }, []);
@@ -75,23 +79,36 @@ const ServiceManagement = () => {
     setFilteredData(data.reverse())
   }
 
-  // láy dữ liệu add vào Drop dịch vụ
   useEffect(() => {
+    // 1. Dispatch action để lấy danh mục từ store theo idStore
+    dispatch(fetchCategories(id_store)); // Đảm bảo bạn truyền idStore vào
+
+    // 2. Lấy danh mục từ API theo idStore
     async function fetchData() {
-      const data = await getListCategorys();
+      try {
+        const data = await getListCategorys(id_store); // Gọi API với idStore
+        console.log('API Response:', data);  // Log the raw response
 
-      // Chuyển đổi dữ liệu từ API thành định dạng mà DropDownPicker cần
-      const formattedItems = data.map(item => ({
-        label: item.nameCategory, // giả sử item có thuộc tính 'name'
-        value: item._id, // giả sử item có thuộc tính 'id'
-        key: item._id,
-      }));
+        // Kiểm tra nếu data là một mảng trước khi map
+        if (Array.isArray(data)) {
+          const formattedItems = data.map((item: { nameCategory: any; _id: string }) => ({
+            label: item.nameCategory, // Giả sử item có thuộc tính 'nameCategory'
+            value: item._id, // Giả sử item có thuộc tính '_id'
+          }));
 
-      setItems(formattedItems);
+          setItems(formattedItems);
+        } else {
+          console.error('Dữ liệu trả về không phải là một mảng:', data);
+        }
+      } catch (error) {
+        console.error('Có lỗi xảy ra khi lấy dữ liệu:', error);
+      }
     }
 
     fetchData();
-  }, []);
+  }, [dispatch, id_store]);
+
+
 
   // Trắng dữ liệu khi thêm tc
   const TrangDL = () => {
@@ -586,20 +603,15 @@ const ServiceManagement = () => {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{ flex: 1, alignItems: 'center' }}
         >
-          <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
-            <View
-              style={styles.box3}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  margin: 10,
-                }}>
+          <View style={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={styles.box3}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
                 <TouchableOpacity
                   onPress={() => {
                     setModleAdd(false), TrangDL();
                   }}
-                  style={styles.btn_back}>
+                  style={styles.btn_back}
+                >
                   <Image
                     style={{ width: 15, height: 15 }}
                     source={require('./icon/back.png')}
@@ -631,7 +643,8 @@ const ServiceManagement = () => {
                     height: 45,
                     marginTop: 25,
                     marginBottom: 5,
-                  }}>
+                  }}
+                >
                   <DropDownPicker
                     open={open}
                     value={value}
@@ -641,7 +654,7 @@ const ServiceManagement = () => {
                     setValue={setValue}
                     setItems={setItems}
                     placeholder="Chọn danh mục"
-                    onChangeValue={(text: any) => {
+                    onChangeValue={(text) => {
                       setDanhMuc(text);
                     }}
                     style={{ backgroundColor: '#F7F8F9', borderColor: '#F7F8F9' }}
@@ -697,14 +710,16 @@ const ServiceManagement = () => {
                     backgroundColor: '#80B3FE',
                     borderRadius: 10,
                     marginTop: 40,
-                  }}>
+                  }}
+                >
                   <Text style={{ color: '#FFFFFF' }}>Hoàn tất</Text>
                 </TouchableOpacity>
               </View>
             </View>
-          </ScrollView>
+          </View>
         </KeyboardAvoidingView>
       </Modal>
+
     </View>
   );
 };

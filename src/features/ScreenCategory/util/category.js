@@ -1,7 +1,8 @@
-import {api} from './api';
+import { api } from './api';
 
 export const getListCategorys = async id_store => {
   try {
+    console.log('Bắt đầu lấy Category');
     const response = await fetch(
       `${api.categoryGetList}?id_store=${id_store}`,
       {
@@ -9,6 +10,7 @@ export const getListCategorys = async id_store => {
       },
     );
     const data = await response.json();
+    console.log('lấy đc Category');
     return data;
   } catch (error) {
     console.error('Error fetching categories: ', error);
