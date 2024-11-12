@@ -43,7 +43,7 @@ export const getListBooking = async (userId) => {
     try {
         const response = await fetch(`${ipAddress}getListBooking`,
             {
-                method: 'POST',
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'

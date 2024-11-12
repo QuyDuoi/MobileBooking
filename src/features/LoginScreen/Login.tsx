@@ -7,12 +7,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import {styles} from './style';
-import {login} from '../../services/api';
+import { styles } from './style';
+import { login } from '../../services/api';
 
-function DangNhap(): React.JSX.Element {
+function DangNhap({ handerlogin }): React.JSX.Element {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [erEmail, setErEmail] = useState('');
@@ -56,19 +56,19 @@ function DangNhap(): React.JSX.Element {
     } else {
       setErPassword('');
     }
-    
+
     if (check) {
       try {
         const data = await login(email, password);
         if (data && data.status === 200) {
-          const {token, refreshToken, data: userData} = data;
+          const { token, refreshToken, data: userData } = data;
           await EncryptedStorage.setItem('accessToken', token);
           await EncryptedStorage.setItem('refreshToken', refreshToken);
           await EncryptedStorage.setItem('tenNhanVien', userData.fullName);
           await EncryptedStorage.setItem('_id', userData._id || '');
           await EncryptedStorage.setItem('vaiTro', userData.userRole || '');
           setWelcomeText(`Welcome back ${userData.fullName}`);
-          // navigation.navigate('Drawer', {vaiTro: userData.userRole});
+          handerlogin()
           console.log("Đăng nhập thành công")
         } else {
           ToastAndroid.show(data.messenger, ToastAndroid.SHORT);
@@ -94,7 +94,7 @@ function DangNhap(): React.JSX.Element {
       </View>
       <Text style={styles.textWc}>{welcomeText}</Text>
       <View style={styles.box2}>
-        <View style={{alignItems: 'center'}}>
+        <View style={{ alignItems: 'center' }}>
           <Text style={styles.tenCty}>
             Booking <Text style={styles.toMau}>Management</Text>
           </Text>
@@ -103,12 +103,12 @@ function DangNhap(): React.JSX.Element {
           style={styles.textInputTk}
           placeholder="Email"
           onChangeText={text => setEmail(text)}
-          value={email} 
+          value={email}
         />
         {erEmail ? <Text style={styles.error}>{erEmail}</Text> : null}
         <View style={styles.textInputMk}>
           <TextInput
-            style={{paddingLeft: 14}}
+            style={{ paddingLeft: 14 }}
             placeholder="Mật khẩu"
             secureTextEntry={showPassword}
             onChangeText={text => setPassword(text)}

@@ -8,14 +8,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import InputTextComponents from './InputTextComponents';
-import {Dropdown, MultiSelect} from 'react-native-element-dropdown';
-import {addBooking, getListEmplayee, getListService, getListStore} from '../util/api';
+import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
+import { addBooking, getListEmplayee, getListService, getListStore } from '../util/api';
 import { isPhoneNumber, isValidDate } from '../util/validate';
 import { Booking } from '../models/booking';
 
-const AddBooking = ({onClose}) => {
+const AddBooking = ({ onClose }) => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [date, setDate] = useState('');
@@ -24,7 +24,7 @@ const AddBooking = ({onClose}) => {
   const [FocusAdd, setFocusAdd] = useState(false)
 
   const [Id_Store, setId_Store] = useState<string | null>(null);
-  const [listStore, setlistStore] = useState<Array<{_id: string; name: string}>>([]);
+  const [listStore, setlistStore] = useState<Array<{ _id: string; name: string }>>([]);
 
   const [Id_Employee, setId_Employee] = useState(null);
   const [listEmployee, setListEmployee] = useState([]);
@@ -37,21 +37,21 @@ const AddBooking = ({onClose}) => {
   const [selectedServices, setSelectedServices] = useState([]);
   const [pricetongge, setpricetongge] = useState(0)
 
-  useEffect(()=>{
-    function getPrice(){
+  useEffect(() => {
+    function getPrice() {
       let totalPrice = 0;
-      listServices.filter((service)=>{
-        selectedServices.forEach(item=>{
-          if(service._id == item){
+      listServices.filter((service) => {
+        selectedServices.forEach(item => {
+          if (service._id == item) {
             totalPrice += service.price
           }
         })
       })
       setpricetongge(totalPrice)
     }
-     getPrice()
-    console.log("selectedServices",selectedServices)
-  },[selectedServices])
+    getPrice()
+    console.log("selectedServices", selectedServices)
+  }, [selectedServices])
 
   useEffect(() => {
     const getdataStore = async () => {
@@ -74,10 +74,12 @@ const AddBooking = ({onClose}) => {
         const list = await getListEmplayee();
         console.log('Danh sách nhân viên:', list);
         console.log('ID cửa hàng đã chọn:', Id_Store);
-        const filteredEmployees = await list.filter(
-          (employee: any) => employee.id_store._id == Id_Store,
-        );
-        setListEmployee(filteredEmployees);
+        // const filteredEmployees = await list.filter(
+        //   (employee: any) => employee.id_store._id == Id_Store,
+        // );
+
+        setListEmployee(list);
+        console.log('Danh sách nhân viên:', listEmployee);
       } else {
         setListEmployee([]);
       }
@@ -130,30 +132,30 @@ const AddBooking = ({onClose}) => {
     setSelectedServices(items);
   };
 
-  const handleAddBooking = async() => {
-     const errors = [];
-     if (name === '') {
-       errors.push('Tên khách hàng không được để trống');
-     }
-     if (!isPhoneNumber(phone)) {
-       errors.push('Số điện thoại không đúng định dạng');
-     }
-     if (!isValidDate(date)) {
-       errors.push('Ngày không đúng định dạng');
-     }
-     if (Id_Store === null) {
-       errors.push('Cửa hàng không được để trống');
-     }
-     if (Id_Employee === null) {
-       errors.push('Nhân viên không được để trống');
-     }
-     if (selectedServices.length == 0) {
-       errors.push('Dịch vụ không được để trống');
-     }
-     if (errors.length > 0) {
-       errors.forEach(error => console.log(error));
-     } else {
-        const booking ={
+  const handleAddBooking = async () => {
+    const errors = [];
+    if (name === '') {
+      errors.push('Tên khách hàng không được để trống');
+    }
+    if (!isPhoneNumber(phone)) {
+      errors.push('Số điện thoại không đúng định dạng');
+    }
+    if (!isValidDate(date)) {
+      errors.push('Ngày không đúng định dạng');
+    }
+    if (Id_Store === null) {
+      errors.push('Cửa hàng không được để trống');
+    }
+    if (Id_Employee === null) {
+      errors.push('Nhân viên không được để trống');
+    }
+    if (selectedServices.length == 0) {
+      errors.push('Dịch vụ không được để trống');
+    }
+    if (errors.length > 0) {
+      errors.forEach(error => console.log(error));
+    } else {
+      const booking = {
         customerName: name,
         phoneNumber: phone,
         dateBooking: date,
@@ -163,30 +165,30 @@ const AddBooking = ({onClose}) => {
         status: false,
         price: pricetongge.toString(),
         note: note
-        }
-        console.log("booking",booking)
-        const isSuccess = await addBooking(booking) 
-        if(isSuccess){
-          console.log('Thêm thành công !')
-           onClose()
-        } else {
-         console.log('Thêm thất bại !')
-           onClose()
-        }
-     }
-     setFocusAdd(true)
+      }
+      console.log("booking", booking)
+      const isSuccess = await addBooking(booking)
+      if (isSuccess) {
+        console.log('Thêm thành công !')
+        onClose()
+      } else {
+        console.log('Thêm thất bại !')
+        onClose()
+      }
     }
+    setFocusAdd(true)
+  }
 
-    const renderItemtt = item => {
-        return (
-          <View style={styles.item}>
-            <Text style={styles.selectedTextStyle}>{item.nameService}</Text>
-            {/* <AntDesign style={styles.icon} color="black" name="Safety" size={20} /> */}
-          </View>
-        );
-      };
+  const renderItemtt = item => {
+    return (
+      <View style={styles.item}>
+        <Text style={styles.selectedTextStyle}>{item.nameService}</Text>
+        {/* <AntDesign style={styles.icon} color="black" name="Safety" size={20} /> */}
+      </View>
+    );
+  };
 
-      
+
   return (
     <View style={styles.body}>
       <Text style={styles.title}>Thêm Booking</Text>
@@ -197,8 +199,8 @@ const AddBooking = ({onClose}) => {
         placeholder="Nhập tên khách hàng"
         onChangeText={(text) => setName(text)}
       />
-      {FocusAdd && name == '' && <Text style={{color:'red',marginStart:8}}>Nhập tên khách hàng !</Text>}
-      <View style={{flexDirection: 'row'}}>
+      {FocusAdd && name == '' && <Text style={{ color: 'red', marginStart: 8 }}>Nhập tên khách hàng !</Text>}
+      <View style={{ flexDirection: 'row' }}>
         <InputTextComponents
           icon="phone"
           value={phone}
@@ -207,7 +209,7 @@ const AddBooking = ({onClose}) => {
           keyboardType="number-pad"
         />
         <InputTextComponents
-          style={{marginLeft: 24}}
+          style={{ marginLeft: 24 }}
           icon="date"
           value={date}
           placeholder="dd/mm/yyyy"
@@ -215,13 +217,13 @@ const AddBooking = ({onClose}) => {
           keyboardType="default"
         />
       </View>
-      <View style={{flexDirection: 'row'}}>
-         <Text style={{color:'red',marginStart:8,flex:1}}>{FocusAdd && !isPhoneNumber(phone) ? 'Số điện thoại không hợp lệ !':''}</Text>
-         <Text style={{color:'red',marginStart:8,flex:1}}>{FocusAdd && !isValidDate(date)? 'Ngày không hợp lệ !': ''}</Text>
-              
+      <View style={{ flexDirection: 'row' }}>
+        <Text style={{ color: 'red', marginStart: 8, flex: 1 }}>{FocusAdd && !isPhoneNumber(phone) ? 'Số điện thoại không hợp lệ !' : ''}</Text>
+        <Text style={{ color: 'red', marginStart: 8, flex: 1 }}>{FocusAdd && !isValidDate(date) ? 'Ngày không hợp lệ !' : ''}</Text>
+
       </View>
       <Dropdown
-        style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
+        style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={styles.inputSearchStyle}
@@ -242,68 +244,68 @@ const AddBooking = ({onClose}) => {
         }}
         renderItem={renderItem} // Hàm render từng mục
       />
-      {FocusAdd && Id_Store == null && <Text style={{color:'red',marginStart:24}}>Vui lòng chọn cửa hàng !</Text>}
+      {FocusAdd && Id_Store == null && <Text style={{ color: 'red', marginStart: 24 }}>Vui lòng chọn cửa hàng !</Text>}
       <MultiSelect
-          style={styles.dropdown}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          inputSearchStyle={styles.inputSearchStyle}
-          iconStyle={styles.iconStyle}
-          data={listServices}
-          labelField="nameService"
-          valueField="_id"
-          placeholder="Chọn dịch vụ"
-          value={selectedServices}
-          search
-          searchPlaceholder="Search..."
-          onChange={item => {
-             setSelectedServices(item)
-          }}
+        style={styles.dropdown}
+        placeholderStyle={styles.placeholderStyle}
+        selectedTextStyle={styles.selectedTextStyle}
+        inputSearchStyle={styles.inputSearchStyle}
+        iconStyle={styles.iconStyle}
+        data={listServices}
+        labelField="nameService"
+        valueField="_id"
+        placeholder="Chọn dịch vụ"
+        value={selectedServices}
+        search
+        searchPlaceholder="Search..."
+        onChange={item => {
+          setSelectedServices(item)
+        }}
         //   renderLeftIcon={() => (
-            
+
         //   )}
-          renderItem={renderItemtt}
-          renderSelectedItem={(item, unSelect) => (
-            <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
-              <View style={styles.selectedStyle}>
-                <Text style={styles.textSelectedStyle}>{item.nameService}</Text>
-                <Image source={require('./icons/delete.png')} style={{width:22,height:22,marginStart:4}}/>
-              </View>
-            </TouchableOpacity>
-          )}
-        />
-        {FocusAdd &&  selectedServices.length == 0 && <Text style={{color:'red',marginStart:24,marginTop:12}}>Vui lòng chọn dịch vụ !</Text>}
-        <Dropdown
-          style={[styles.dropdown, isFocusEmployee && {borderColor: 'blue'}]}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          inputSearchStyle={styles.inputSearchStyle}
-          iconStyle={styles.iconStyle}
-          data={listEmployee}
-          search
-          maxHeight={300}
-          labelField="fullName"
-          valueField="_id"
-          placeholder={!isFocusEmployee ? 'Chọn nhân viên' : '...'}
-          searchPlaceholder="Tìm kiếm..."
-          value={Id_Employee}
-          onFocus={() => setIsFocusEmployee(true)}
-          onBlur={() => setIsFocusEmployee(false)}
-          onChange={item => {
-            setId_Employee(item._id);
-            setIsFocusEmployee(false);
-            console.log(
-              'Đã chọn nhân viên:',
-              item.fullName,
-              'với ID:',
-              item._id,
-            );
-          }}
-          renderItem={renderItemEmployee}
-        />
-    {FocusAdd && Id_Employee == null && <Text style={{color:'red',marginStart:24,marginTop:12}}>Vui lòng chọn Nhân viên !</Text>}
-      
-      
+        renderItem={renderItemtt}
+        renderSelectedItem={(item, unSelect) => (
+          <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
+            <View style={styles.selectedStyle}>
+              <Text style={styles.textSelectedStyle}>{item.nameService}</Text>
+              <Image source={require('./icons/delete.png')} style={{ width: 22, height: 22, marginStart: 4 }} />
+            </View>
+          </TouchableOpacity>
+        )}
+      />
+      {FocusAdd && selectedServices.length == 0 && <Text style={{ color: 'red', marginStart: 24, marginTop: 12 }}>Vui lòng chọn dịch vụ !</Text>}
+      <Dropdown
+        style={[styles.dropdown, isFocusEmployee && { borderColor: 'blue' }]}
+        placeholderStyle={styles.placeholderStyle}
+        selectedTextStyle={styles.selectedTextStyle}
+        inputSearchStyle={styles.inputSearchStyle}
+        iconStyle={styles.iconStyle}
+        data={listEmployee}
+        search
+        maxHeight={300}
+        labelField="fullName"
+        valueField="_id"
+        placeholder={!isFocusEmployee ? 'Chọn nhân viên' : '...'}
+        searchPlaceholder="Tìm kiếm..."
+        value={Id_Employee}
+        onFocus={() => setIsFocusEmployee(true)}
+        onBlur={() => setIsFocusEmployee(false)}
+        onChange={item => {
+          setId_Employee(item._id);
+          setIsFocusEmployee(false);
+          console.log(
+            'Đã chọn nhân viên:',
+            item.fullName,
+            'với ID:',
+            item._id,
+          );
+        }}
+        renderItem={renderItemEmployee}
+      />
+      {FocusAdd && Id_Employee == null && <Text style={{ color: 'red', marginStart: 24, marginTop: 12 }}>Vui lòng chọn Nhân viên !</Text>}
+
+
       <View style={styles.inputNote}>
         <TextInput
           multiline={true}
@@ -314,21 +316,21 @@ const AddBooking = ({onClose}) => {
           onChangeText={(text) => setNote(text)}
         />
       </View>
-      
-      <Text style={{marginStart:24,marginVertical:12 ,color:'orange',fontWeight:'bold',fontSize:18}}>Tổng cộng: {pricetongge} VNĐ</Text>
+
+      <Text style={{ marginStart: 24, marginVertical: 12, color: 'orange', fontWeight: 'bold', fontSize: 18 }}>Tổng cộng: {pricetongge} VNĐ</Text>
 
       <View style={styles.actionContainer}>
-        <TouchableOpacity onPress={() =>onClose()}>
+        <TouchableOpacity onPress={() => onClose()}>
           <Image
             style={styles.actionButton}
-            source={{uri: 'https://i.imgur.com/K147jQY.png'}}
+            source={{ uri: 'https://i.imgur.com/K147jQY.png' }}
           />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => {handleAddBooking()}}>
+        <TouchableOpacity onPress={() => { handleAddBooking() }}>
           <Image
             style={styles.actionButton}
-            source={{uri: 'https://i.imgur.com/JIrCx2a.png'}}
+            source={{ uri: 'https://i.imgur.com/JIrCx2a.png' }}
           />
         </TouchableOpacity>
       </View>
